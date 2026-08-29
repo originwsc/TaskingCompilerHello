@@ -1,0 +1,48 @@
+﻿scons: Reading SConscript files ...
+
+============================================================
+  TASKING TriCore SCons Build System
+============================================================
+
+  [项目]
+    名称:        Hello
+    目标芯片:    tc36x
+    构建变体:    debug
+    源文件数:    4
+
+  [编译器]
+    路径:        D:\Program Files\TASKING\TriCore v6.3r1\ctc\bin
+
+  [目录结构]
+    SConstruct:  E:\workspace\scons\Hello\SConstruct
+    中间文件:    E:\workspace\scons\Hello\build\tasking\debug\
+    最终输出:    E:\workspace\scons\Hello\output\
+
+  [产物]
+    ELF:         E:\workspace\scons\Hello\output\Hello.elf
+    HEX:         E:\workspace\scons\Hello\output\Hello.hex
+    MAP:         E:\workspace\scons\Hello\output\Hello.map
+
+  [用法]
+    scons variant=debug            # Debug 构建
+    scons variant=release          # Release 构建
+    scons -c                       # 清理
+    scons -j4                      # 4 核并行编译
+
+============================================================
+
+scons: done reading SConscript files.
+scons: Building targets ...
+"D:\Program Files\TASKING\TriCore v6.3r1\ctc\bin\cctc.exe" -c -o build\tasking\debug\App\cstart.obj -Ctc36x --iso=99 --language=+volatile --exceptions --anachronisms --fp-model=3 --tradeoff=4 --compact-max-size=200 -Y0 -N0 -Z0 --error-limit=42 -Wc-w544 -Wc-w557 -Wc-w508 -g -O0 -I. -IApp App\cstart.c
+"D:\Program Files\TASKING\TriCore v6.3r1\ctc\bin\cctc.exe" -c -o build\tasking\debug\App\cstart_tc1.obj -Ctc36x --iso=99 --language=+volatile --exceptions --anachronisms --fp-model=3 --tradeoff=4 --compact-max-size=200 -Y0 -N0 -Z0 --error-limit=42 -Wc-w544 -Wc-w557 -Wc-w508 -g -O0 -I. -IApp App\cstart_tc1.c
+"D:\Program Files\TASKING\TriCore v6.3r1\ctc\bin\cctc.exe" -c -o build\tasking\debug\App\Hello.obj -Ctc36x --iso=99 --language=+volatile --exceptions --anachronisms --fp-model=3 --tradeoff=4 --compact-max-size=200 -Y0 -N0 -Z0 --error-limit=42 -Wc-w544 -Wc-w557 -Wc-w508 -g -O0 -I. -IApp App\Hello.c
+"D:\Program Files\TASKING\TriCore v6.3r1\ctc\bin\cctc.exe" -c -o build\tasking\debug\App\sync_on_halt.obj -Ctc36x --iso=99 --language=+volatile --exceptions --anachronisms --fp-model=3 --tradeoff=4 --compact-max-size=200 -Y0 -N0 -Z0 --error-limit=42 -Wc-w544 -Wc-w557 -Wc-w508 -g -O0 -I. -IApp App\sync_on_halt.c
+"D:\Program Files\TASKING\TriCore v6.3r1\ctc\bin\cctc.exe" -o build\tasking\debug\Hello.elf -Ctc36x --lsl-file=E:\workspace\scons\Hello\Linker\Hello.lsl --lsl-core=vtc -Wl--map-file=Hello.map -Wl-Oc -Wl-OL -Wl-Ot -Wl-Ox -Wl-Oy -Wl-mc -Wl-mf -Wl-mi -Wl-mk -Wl-ml -Wl-mm -Wl-md -Wl-mr -Wl-mu --fp-model=3 -lrt --exceptions --strict --anachronisms --force-c++ --error-limit=42 -Wl-oE:\workspace\scons\Hello\build\tasking\debug\Hello.hex:IHEX build\tasking\debug\App\cstart.obj build\tasking\debug\App\cstart_tc1.obj build\tasking\debug\App\Hello.obj build\tasking\debug\App\sync_on_halt.obj
+_copy_to_output(["output\.output_stamp"], ["build\tasking\debug\Hello.elf"])
+
+  [Output] 产物已复制到: E:\workspace\scons\Hello\output
+           - Hello.elf
+           - Hello.hex
+           - Hello.map
+
+scons: done building targets.

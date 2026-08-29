@@ -1,4 +1,0 @@
-IfxGpt12_PinMap_TC33x_LFBGA180.o :	../Libraries/iLLD/TC3xx/Tricore/_PinMap/TC33x/IfxGpt12_PinMap_TC33x_LFBGA180.c
-../Libraries/iLLD/TC3xx/Tricore/_PinMap/TC33x/IfxGpt12_PinMap_TC33x_LFBGA180.c :
-IfxGpt12_PinMap_TC33x_LFBGA180.o :	"D:\\Users\\12\\AURIX-v1.10.36-workspace\\hello\\Configurations\Ifx_Cfg.h"
-"D:\\Users\\12\\AURIX-v1.10.36-workspace\\hello\\Configurations\Ifx_Cfg.h" :

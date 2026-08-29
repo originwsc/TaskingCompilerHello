@@ -1,52 +1,67 @@
 # -*- coding: utf-8 -*-
-# SCons build script for Infineon AURIX TC3xx (TriCore) project
-# Based on AURIX Studio IDE's TASKING compiler invocation
+"""
+SCons build script for TASKING TriCore project.
+====================================================================
+
+适配大型 AUTOSAR 代码库的 CI/CD 编译环境。
+- 编译器: TASKING VX-toolset for TriCore (商业版)
+- 目标芯片: Infineon TriCore TC3xx (tc36x)
+- 构建变体: debug / release
+- 所有产物路径均以 SConstruct 所在目录为基准
+
+用法:
+    scons variant=debug          # Debug 构建 (默认)
+    scons variant=release        # Release 构建
+    scons -c                     # 清理
+    scons -j4                    # 并行编译
+
+CI/CD 示例:
+    set TASKING_BIN_DIR=D:\Program Files\TASKING\TriCore v6.3r1\ctc\bin
+    scons variant=release -j4
+    echo Exit code: %ERRORLEVEL%
+"""
 
 import os
 import sys
+import shutil
+import glob as py_glob
 
-# ---------------------------------------------------------------------------
-# 1. Project configuration
-# ---------------------------------------------------------------------------
-PROJECT_NAME = 'hello'
-TARGET_CHIP  = 'tc33x'          # Target: TC33x (TASKING format)
-OUTPUT_ELF   = 'hello'          # Output ELF name
+# ===========================================================================
+#  0. 环境检测与辅助函数
+# ===========================================================================
 
-# Build variant: 'debug' or 'release'
-VARIANT = ARGUMENTS.get('variant', 'debug')
-
-# ---------------------------------------------------------------------------
-# 1.1 Auto-detect TASKING TriCore compiler (AURIX Studio bundled or standalone commercial)
-# ---------------------------------------------------------------------------
 def _make_tasking_info(bin_dir):
-    """Build TASKING compiler info dict from a bin directory."""
     return {
         'bin_dir': bin_dir,
-        'cc': os.path.join(bin_dir, 'cctc.exe'),
-        'as': os.path.join(bin_dir, 'astc.exe'),
+        'cc':  os.path.join(bin_dir, 'cctc.exe'),
+        'as':  os.path.join(bin_dir, 'astc.exe'),
+        'ar':  os.path.join(bin_dir, 'artc.exe'),
     }
 
 def detect_tasking_compiler():
-    """Auto-detect TASKING TriCore compiler from multiple installation sources.
-    Priority: environment variables > standalone install > AURIX Studio bundled.
-    """
-    # Priority 1: Environment variables (commercial TASKING)
-    env_vars = ['TASKING_HOME', 'TASKING_ROOT', 'CTC_BIN', 'TASKING_TOOL_PATH']
+    manual_bin = COMPILER_BIN_DIR
+    if manual_bin and os.path.isdir(manual_bin) and os.path.isfile(os.path.join(manual_bin, 'cctc.exe')):
+        return _make_tasking_info(manual_bin)
+
+    env_bin = os.environ.get('TASKING_BIN_DIR')
+    if env_bin and os.path.isdir(env_bin) and os.path.isfile(os.path.join(env_bin, 'cctc.exe')):
+        return _make_tasking_info(env_bin)
+
+    env_vars = ['TASKING_HOME', 'TASKING_ROOT', 'CTC_BIN']
     for var in env_vars:
         val = os.environ.get(var)
         if val and os.path.isdir(val):
-            # If pointing directly to ctc/bin, use it; otherwise look for ctc/bin underneath
             if os.path.isfile(os.path.join(val, 'cctc.exe')):
                 return _make_tasking_info(val)
             bin_candidate = os.path.join(val, 'ctc', 'bin')
             if os.path.isfile(os.path.join(bin_candidate, 'cctc.exe')):
                 return _make_tasking_info(bin_candidate)
 
-    # Priority 2: Common standalone TASKING install directories (commercial)
     standalone_roots = [
-        'C:\\TASKING',
+        'D:\\Program Files\\TASKING',
         'C:\\Program Files\\TASKING',
         'C:\\Program Files (x86)\\TASKING',
+        'C:\\TASKING',
         'D:\\TASKING',
     ]
     for root in standalone_roots:
@@ -58,234 +73,273 @@ def detect_tasking_compiler():
                 if os.path.isfile(os.path.join(bin_dir, 'cctc.exe')):
                     return _make_tasking_info(bin_dir)
 
-    # Priority 3: AURIX Studio bundled TASKING
-    search_roots = ['D:\\Infineon', 'C:\\Infineon']
-    for root in search_roots:
-        if not os.path.isdir(root):
-            continue
-        for entry in os.listdir(root):
-            if entry.startswith('AURIX-Studio'):
-                studio_path = os.path.join(root, entry)
-                tools_dir = os.path.join(studio_path, 'tools', 'Compilers')
-                if not os.path.isdir(tools_dir):
-                    continue
-                for tasking_dir in os.listdir(tools_dir):
-                    if tasking_dir.startswith('Tasking'):
-                        bin_dir = os.path.join(tools_dir, tasking_dir, 'ctc', 'bin')
-                        if os.path.isfile(os.path.join(bin_dir, 'cctc.exe')):
-                            return _make_tasking_info(bin_dir)
-
     return None
+
+# ===========================================================================
+#  1. 项目配置
+# ===========================================================================
+
+# --- 1.0 编译器路径 ---
+COMPILER_BIN_DIR = r'D:\Program Files\TASKING\TriCore v6.3r1\ctc\bin'
+
+# --- 1.1 项目基本信息 ---
+# ★ SConstruct 所在目录, 所有产物路径均以此为基准
+# ★ 不要使用任何与项目名绑定的路径, 以便直接复制到其他工程使用
+PROJECT_DIR  = Dir('.').abspath
+
+PROJECT_NAME = 'Hello'                     # 输出文件名
+TARGET_CHIP  = 'tc36x'                     # 目标芯片
+VARIANT      = ARGUMENTS.get('variant', 'debug')  # 构建变体
+
+# --- 1.2 源文件 (Glob 自动递归发现, 无需手动列举) ---
+# 只需指定源码根目录, SCons 自动递归扫描所有 .c 文件
+# 新增目录直接往 SOURCE_DIRS 里添加即可
+SOURCE_DIRS = [
+    r'App',
+]
+
+# 需要排除的源文件 (可选, 匹配路径末尾)
+SOURCE_EXCLUDE_PATTERNS = []
+
+# 使用 Python glob 递归扫描所有 .c 文件 (SCons Glob 不支持 ** 递归)
+SOURCE_FILES = []
+for d in SOURCE_DIRS:
+    for f in py_glob.glob(d.replace('\\', '/') + '/**/*.c', recursive=True):
+        SOURCE_FILES.append(File(f))
+
+# 排除规则
+if SOURCE_EXCLUDE_PATTERNS:
+    SOURCE_FILES = [
+        f for f in SOURCE_FILES
+        if not any(p in f.srcnode().abspath for p in SOURCE_EXCLUDE_PATTERNS)
+    ]
+
+# --- 1.3 头文件搜索路径 ---
+INCLUDE_DIRS = [
+    '.',
+    r'App',
+]
+
+# --- 1.4 链接脚本 ---
+LSL_FILE = os.path.join(PROJECT_DIR, 'Linker', 'Hello.lsl')
+
+# --- 1.5 预处理器宏定义 ---
+CPPDEFINES = [
+    ('__CPU__', TARGET_CHIP),
+]
+
+# ===========================================================================
+#  2. 编译器标志
+# ===========================================================================
+
+CCFLAGS_COMMON = [
+    '-C' + TARGET_CHIP,
+    '--iso=99',
+    '--language=+volatile',
+    '--exceptions',
+    '--anachronisms',
+    '--fp-model=3',
+    '--tradeoff=4',
+    '--compact-max-size=200',
+    '-Y0', '-N0', '-Z0',
+    '--error-limit=42',
+    '-Wc-w544', '-Wc-w557', '-Wc-w508',
+]
+
+CCFLAGS_DEBUG = ['-g', '-O0']
+CCFLAGS_RELEASE = ['-O2']
+
+ASFLAGS = ['-C' + TARGET_CHIP, '-g']
+
+# ===========================================================================
+#  3. 链接器标志
+# ===========================================================================
+
+LINKFLAGS = [
+    '-C' + TARGET_CHIP,
+    '--lsl-file=' + LSL_FILE,
+    '--lsl-core=vtc',
+    '-Wl--map-file=' + PROJECT_NAME + '.map',
+    '-Wl-Oc', '-Wl-OL', '-Wl-Ot', '-Wl-Ox', '-Wl-Oy',
+    '-Wl-mc', '-Wl-mf', '-Wl-mi', '-Wl-mk', '-Wl-ml',
+    '-Wl-mm', '-Wl-md', '-Wl-mr', '-Wl-mu',
+    '--fp-model=3', '-lrt',
+    '--exceptions', '--strict', '--anachronisms', '--force-c++',
+    '--error-limit=42',
+]
+
+# ===========================================================================
+#  4. 编译器自动检测
+# ===========================================================================
 
 TASKING_INFO = detect_tasking_compiler()
 
 if TASKING_INFO is None:
-    print('ERROR: TASKING TriCore compiler not found!')
-    print('  Searched locations:')
-    print('    1. Environment: TASKING_HOME, TASKING_ROOT, CTC_BIN, TASKING_TOOL_PATH')
-    print('    2. Standalone: C:\\TASKING\\TriCore*, C:\\Program Files\\TASKING\\TriCore*')
-    print('    3. AURIX Studio: D:\\Infineon\\AURIX-Studio-*\\tools\\Compilers\\Tasking_*')
     print('')
-    print('  To use commercial TASKING, set an environment variable, e.g.:')
-    print('    set TASKING_HOME=C:\\TASKING\\TriCore v6.3r1')
+    print('=' * 60)
+    print('  ERROR: TASKING TriCore compiler not found!')
+    print('=' * 60)
+    print('  To fix: set TASKING_BIN_DIR=D:\\Program Files\\TASKING\\TriCore v6.3r1\\ctc\\bin')
     print('')
     Exit(1)
 
-# ---------------------------------------------------------------------------
-# 2. Paths
-# ---------------------------------------------------------------------------
-PROJECT_DIR = Dir('.').abspath
+# ===========================================================================
+#  5. SCons 环境配置
+# ===========================================================================
 
-# Include directories (from AURIX Studio .cproject)
-INCLUDE_DIRS = [
-    '.',
-    'Configurations',
-    'Configurations/Debug',
-    'Libraries',
-    'Libraries/Infra',
-    'Libraries/Infra/Platform',
-    'Libraries/Infra/Platform/Tricore',
-    'Libraries/Infra/Platform/Tricore/Compilers',
-    'Libraries/Infra/Sfr',
-    'Libraries/Infra/Sfr/TC33x',
-    'Libraries/Infra/Ssw',
-    'Libraries/Infra/Ssw/TC3xx',
-    'Libraries/Infra/Ssw/TC3xx/Tricore',
-    'Libraries/Service',
-    'Libraries/Service/CpuGeneric',
-    'Libraries/Service/CpuGeneric/If',
-    'Libraries/Service/CpuGeneric/If/Ccu6If',
-    'Libraries/Service/CpuGeneric/StdIf',
-    'Libraries/Service/CpuGeneric/SysSe',
-    'Libraries/Service/CpuGeneric/SysSe/Bsp',
-    'Libraries/Service/CpuGeneric/SysSe/Comm',
-    'Libraries/Service/CpuGeneric/SysSe/General',
-    'Libraries/Service/CpuGeneric/SysSe/Math',
-    'Libraries/Service/CpuGeneric/SysSe/Time',
-    'Libraries/Service/CpuGeneric/_Utilities',
-    'Libraries/iLLD',
-    'Libraries/iLLD/TC3xx',
-    'Libraries/iLLD/TC3xx/Tricore',
-]
-
-# Dynamically add all subdirectories under iLLD/TC3xx/Tricore
-illd_tricore_dir = os.path.join(PROJECT_DIR, 'Libraries', 'iLLD', 'TC3xx', 'Tricore')
-if os.path.isdir(illd_tricore_dir):
-    for root, dirs, files in os.walk(illd_tricore_dir):
-        rel_path = os.path.relpath(root, PROJECT_DIR)
-        INCLUDE_DIRS.append(rel_path.replace('\\', '/'))
-
-# Deduplicate include directories
-seen = set()
-INCLUDE_DIRS = [d for d in INCLUDE_DIRS if not (d in seen or seen.add(d))]
-
-# ---------------------------------------------------------------------------
-# 3. Source files
-# ---------------------------------------------------------------------------
-def collect_sources(base_dir):
-    """Recursively collect all .c files under base_dir."""
-    sources = []
-    for root, dirs, files in os.walk(base_dir):
-        for f in files:
-            if f.endswith('.c'):
-                rel_path = os.path.relpath(os.path.join(root, f), PROJECT_DIR)
-                sources.append(rel_path)
-    return sources
-
-SOURCES = collect_sources(PROJECT_DIR)
-
-# TASKING compiler on Windows uses backslashes; normalize all paths
-SOURCES = [s.replace('/', '\\') for s in SOURCES]
-
-# ---------------------------------------------------------------------------
-# 4. Generate TASKING-style include path response file
-# ---------------------------------------------------------------------------
-def generate_task_include_rsp():
-    """Generate a TASKING-style response file for include paths.
-    TASKING format: all on one line, -I"path" with double backslashes.
-    Example: -I"D:\\path\\to\\dir" -I"D:\\path\\to\\dir2"
-    """
-    rsp_path = os.path.join(PROJECT_DIR, 'include_paths.rsp')
-    parts = []
-    for inc in INCLUDE_DIRS:
-        abs_inc = os.path.join(PROJECT_DIR, inc)
-        # TASKING: double backslashes, quoted
-        abs_inc = abs_inc.replace('/', '\\')
-        parts.append('-I"' + abs_inc + '"')
-    with open(rsp_path, 'w', newline='\n') as f:
-        f.write(' '.join(parts) + '\n')
-    return rsp_path
-
-# ---------------------------------------------------------------------------
-# 5. Build environment setup
-# ---------------------------------------------------------------------------
 env = Environment(ENV=os.environ)
 
-# Embedded cross-compilation: no .exe suffix on Windows
+env.Replace(
+    CC   = '"' + TASKING_INFO['cc'] + '"',
+    AS   = '"' + TASKING_INFO['as'] + '"',
+    LINK = '"' + TASKING_INFO['cc'] + '"',
+    AR   = '"' + TASKING_INFO['ar'] + '"',
+)
+
 env['PROGSUFFIX'] = '.elf'
+env['CCCOM']     = '$CC -c -o $TARGET $CCFLAGS $_CPPINCFLAGS $SOURCES'
+env['LINKCOM']   = '$LINK -o $TARGET $LINKFLAGS $SOURCES'
+env['ASCOM']     = '$AS -o $TARGET $ASFLAGS $SOURCES'
+env['ARCOM']     = '$AR -r -o $TARGET $SOURCES'
 
-# --- TASKING toolchain settings ---
-CC   = TASKING_INFO['cc']
-AS   = TASKING_INFO['as']
-LINK = TASKING_INFO['cc']  # cctc is both compiler and linker driver
+env['CCFLAGS']   = [f for f in env['CCFLAGS']   if f not in ('/nologo',)]
+env['LINKFLAGS'] = [f for f in env['LINKFLAGS'] if f not in ('/nologo',)]
+env['ASFLAGS']   = []
 
-env.Replace(CC=CC, AS=AS, LINK=LINK)
+env['INCPREFIX']  = '-I'
+env['INCSUFFIX']  = ''
+env['_CPPINCFLAGS'] = '$( ${_concat(INCPREFIX, CPPPATH, INCSUFFIX, __env__, RDirs, TARGET, SOURCE)} $)'
 
-# Override default SCons command templates to use TASKING-style flags
-# (SCons on Windows defaults to MSVC-style /Fo /nologo)
-env['CCCOM'] = '$CC -c -o $TARGET $CCFLAGS $_CPPINCFLAGS $SOURCES'
-env['LINKCOM'] = '$LINK -o $TARGET $LINKFLAGS $SOURCES'
-env['ASCOM'] = '$AS -o $TARGET $ASFLAGS $SOURCES'
+# ===========================================================================
+#  6. 构建变体配置
+# ===========================================================================
 
-# Remove MSVC-specific flags that SCons adds on Windows
-env['CCFLAGS'] = [f for f in env['CCFLAGS'] if f != '/nologo']
-env['LINKFLAGS'] = [f for f in env['LINKFLAGS'] if f != '/nologo']
-
-# Generate TASKING include path response file
-include_rsp = generate_task_include_rsp()
-
-# --- Compiler flags (matching AURIX Studio IDE) ---
-env.Append(CCFLAGS=[
-    '-C' + TARGET_CHIP,           # CPU target: tc33x
-    '-D__CPU__=' + TARGET_CHIP,   # Chip define
-    '--iso=99',                   # C99 standard
-    '--language=+volatile',       # Language extensions
-    '--exceptions',               # Enable exceptions
-    '--anachronisms',             # Allow anachronisms
-    '--fp-model=3',               # Floating point model
-    '--tradeoff=4',               # Speed vs size tradeoff
-    '--compact-max-size=200',     # Compact optimization limit
-    '-Y0',                        # No MISRA check
-    '-N0',                        # No performance check
-    '-Z0',                        # No certification check
-    '--error-limit=42',           # Max errors
-    '-f', include_rsp,            # Include path response file
-])
-
-# Debug / Release variant
 if VARIANT == 'debug':
-    env.Append(CCFLAGS=['-g', '-O0'])
+    variant_flags = CCFLAGS_DEBUG
+    variant_suffix = 'debug'
+elif VARIANT == 'release':
+    variant_flags = CCFLAGS_RELEASE
+    variant_suffix = 'release'
 else:
-    env.Append(CCFLAGS=['-O2'])
+    print('ERROR: Unknown variant "%s". Use "debug" or "release".' % VARIANT)
+    Exit(1)
 
-# Suppress specific warnings (matching IDE)
-env.Append(CCFLAGS=[
-    '-Wc-w544',
-    '-Wc-w557',
-    '-Wc-w508',
-])
+env.Append(CCFLAGS=CCFLAGS_COMMON + variant_flags)
+env.Append(ASFLAGS=ASFLAGS)
+env.Append(LINKFLAGS=LINKFLAGS)
+env.Append(CPPDEFINES=CPPDEFINES)
 
-# --- Linker flags (matching AURIX Studio IDE) ---
-lsl_path = os.path.join(PROJECT_DIR, 'Lcf_Tasking_Tricore_Tc.lsl')
-env.Append(LINKFLAGS=[
-    '-C' + TARGET_CHIP,                        # CPU target
-    '--lsl-file=' + lsl_path,                  # Linker script
-    '--lsl-core=vtc',                          # LSL core
-    '-Wl--map-file=' + OUTPUT_ELF + '.map',    # Map file
-    '-Wl-Oc', '-Wl-OL', '-Wl-Ot', '-Wl-Ox', '-Wl-Oy',  # Linker optimizations
-    '-Wl-mc', '-Wl-mf', '-Wl-mi', '-Wl-mk', '-Wl-ml', '-Wl-mm', '-Wl-md', '-Wl-mr', '-Wl-mu',  # Map file content
-    '-Wl--error-limit=42',                     # Max linker errors
-    '--fp-model=3',                            # FP model
-    '-lrt',                                    # Runtime library
-    '--exceptions',                            # Exceptions
-    '--strict',                                # Strict mode
-    '--anachronisms',                          # Anachronisms
-    '--force-c++',                             # Force C++ linkage
-])
+for inc_dir in INCLUDE_DIRS:
+    abs_inc = os.path.join(PROJECT_DIR, inc_dir)
+    if os.path.isdir(abs_inc):
+        env.Append(CPPPATH=[abs_inc])
 
-# Generate HEX file alongside ELF
-env.Append(LINKFLAGS=['-Wl-o' + OUTPUT_ELF + '.hex:IHEX'])
+# ===========================================================================
+#  7. 构建目标
+# ===========================================================================
 
-# Build output directory
-build_dir = os.path.join('build', 'tasking', VARIANT)
+# 中间产物: build/tasking/debug/  (以 SConstruct 所在目录为基准)
+BUILD_DIR = os.path.join(PROJECT_DIR, 'build', 'tasking', variant_suffix)
 
-# ---------------------------------------------------------------------------
-# 6. Compile and link
-# ---------------------------------------------------------------------------
-# Build the ELF target
-elf = env.Program(target=OUTPUT_ELF, source=SOURCES)
+# 编译 .c -> .obj (镜像源文件目录结构)
+obj_files = []
+for src in SOURCE_FILES:
+    src_path = src.srcnode().abspath
+    rel_path = os.path.relpath(src_path, PROJECT_DIR)
+    obj_path = os.path.join(BUILD_DIR, rel_path.replace('.c', '.obj'))
+    obj = env.Object(target=obj_path, source=src)
+    obj_files.append(obj)
 
-# Mark as default target
-Default(elf)
+# 链接 ELF
+elf_target = env.Program(target=os.path.join(BUILD_DIR, PROJECT_NAME),
+                         source=obj_files)
 
-# Clean target
-env.Clean(elf, [build_dir])
+# 生成 HEX
+hex_path = os.path.join(BUILD_DIR, PROJECT_NAME + '.hex')
+hex_target = env.File(hex_path)
+env.Append(LINKFLAGS=['-Wl-o' + hex_path + ':IHEX'])
+env.SideEffect(hex_target, elf_target)
 
-# "all" target
-env.Alias('all', [elf])
+# ===========================================================================
+#  8. 输出产物到 output/ 目录 (以 SConstruct 所在目录为基准)
+# ===========================================================================
 
-# ---------------------------------------------------------------------------
-# 7. Print build info
-# ---------------------------------------------------------------------------
+OUTPUT_DIR = os.path.join(PROJECT_DIR, 'output')
+
+def _copy_to_output(target, source, env):
+    src_dir = BUILD_DIR
+    dst_dir = OUTPUT_DIR
+    if not os.path.exists(dst_dir):
+        os.makedirs(dst_dir)
+    artifacts = [
+        (PROJECT_NAME + '.elf', PROJECT_NAME + '.elf'),
+        (PROJECT_NAME + '.hex', PROJECT_NAME + '.hex'),
+        (PROJECT_NAME + '.map', PROJECT_NAME + '.map'),
+    ]
+    copied = []
+    for src_name, dst_name in artifacts:
+        src_path = os.path.join(src_dir, src_name)
+        dst_path = os.path.join(dst_dir, dst_name)
+        if os.path.isfile(src_path):
+            shutil.copy2(src_path, dst_path)
+            copied.append(dst_name)
+    print('')
+    print('  [Output] 产物已复制到: %s' % dst_dir)
+    for name in copied:
+        print('           - %s' % name)
+    print('')
+
+output_stamp = env.Command(
+    target=os.path.join(OUTPUT_DIR, '.output_stamp'),
+    source=elf_target,
+    action=_copy_to_output,
+)
+env.AlwaysBuild(output_stamp)
+
+# ===========================================================================
+#  9. 默认目标与别名
+# ===========================================================================
+
+env.Default(elf_target, output_stamp)
+
+output_alias = env.Alias('output', elf_target, _copy_to_output)
+env.AlwaysBuild(output_alias)
+
+env.Clean(elf_target, [BUILD_DIR, OUTPUT_DIR])
+
+# ===========================================================================
+#  10. 构建信息打印
+# ===========================================================================
+
 print('')
 print('=' * 60)
-print('  AURIX TC3xx SCons Build System (TASKING)')
+print('  TASKING TriCore SCons Build System')
 print('=' * 60)
-print('  Project:   %s' % PROJECT_NAME)
-print('  Variant:   %s' % VARIANT)
-print('  Target:    %s' % TARGET_CHIP)
-print('  Output:    %s' % OUTPUT_ELF)
-print('  Sources:   %d files' % len(SOURCES))
-print('  Compiler:  %s' % env['CC'])
+print('')
+print('  [项目]')
+print('    名称:        %s' % PROJECT_NAME)
+print('    目标芯片:    %s' % TARGET_CHIP)
+print('    构建变体:    %s' % VARIANT)
+print('    源文件数:    %d' % len(SOURCE_FILES))
+print('')
+print('  [编译器]')
+print('    路径:        %s' % TASKING_INFO['bin_dir'])
+print('')
+print('  [目录结构]')
+print('    SConstruct:  %s\\SConstruct' % PROJECT_DIR)
+print('    中间文件:    %s\\' % BUILD_DIR)
+print('    最终输出:    %s\\' % OUTPUT_DIR)
+print('')
+print('  [产物]')
+print('    ELF:         %s\\%s.elf' % (OUTPUT_DIR, PROJECT_NAME))
+print('    HEX:         %s\\%s.hex' % (OUTPUT_DIR, PROJECT_NAME))
+print('    MAP:         %s\\%s.map' % (OUTPUT_DIR, PROJECT_NAME))
+print('')
+print('  [用法]')
+print('    scons variant=debug            # Debug 构建')
+print('    scons variant=release          # Release 构建')
+print('    scons -c                       # 清理')
+print('    scons -j4                      # 4 核并行编译')
+print('')
 print('=' * 60)
 print('')

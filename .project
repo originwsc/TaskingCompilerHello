@@ -1,31 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>hello</name>
+	<name>Hello</name>
 	<comment></comment>
 	<projects>
 	</projects>
 	<buildSpec>
 		<buildCommand>
-			<name>com.infineon.aurix.buildsystem.builders.booster</name>
-			<triggers>full,incremental,</triggers>
-			<arguments>
-			</arguments>
-		</buildCommand>
-		<buildCommand>
-			<name>com.infineon.aurix.buildsystem.builders.autodiscovery</name>
-			<triggers>full,incremental,</triggers>
-			<arguments>
-			</arguments>
-		</buildCommand>
-		<buildCommand>
-			<name>org.eclipse.cdt.managedbuilder.core.genmakebuilder</name>
-			<triggers>clean,full,incremental,</triggers>
-			<arguments>
-			</arguments>
-		</buildCommand>
-		<buildCommand>
-			<name>org.eclipse.cdt.managedbuilder.core.ScannerConfigBuilder</name>
-			<triggers>full,incremental,</triggers>
+			<name>com.tasking.ctc.TskManagedBuilder</name>
 			<arguments>
 			</arguments>
 		</buildCommand>
@@ -33,7 +14,7 @@
 	<natures>
 		<nature>org.eclipse.cdt.core.cnature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
-		<nature>com.infineon.aurix.buildsystem.aurixnature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
+		<nature>com.tasking.ctc.target</nature>
 	</natures>
 </projectDescription>
