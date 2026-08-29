@@ -1,0 +1,96 @@
+﻿Usage: hldumptc.exe [options] absolute-file
+Summary of options:
+  -?                                 show usage
+  -A --adx-format[=<flag(s)>,...]    dump ELF or DWARF symbolic info in ADX
+                                     address list format. By default the DWARF
+                                     info is used. (default: RE)
+                                     lowercase/+ enables, uppercase/- disables:
+       e/E +/-force-elf-mode           force using the ELF symbols instead of
+                                       the DWARF debug info
+       r/R +/-reduced                  do not output tags CATEGORY,
+                                       COMP-UNIT-NAME, COMP-UNIT-DIR and
+                                       CALLED-SYMBOLS
+  -F --dump-format[=<flag>,...]      specify dump formats (default: CdFhmnsy)
+       0                               alias for -FCDFHMNSY
+       1                               alias for -FCDFhMNSY
+       2                               alias for -FCdFHMNSY
+       3                               alias for -Fcdfhmnsy
+                                     lowercase/+ enables, uppercase/- disables:
+       c/C +/-callgraph                dump executable's call graph
+       d/D +/-dump                     dump sections' contents
+       f/F +/-debug-control-flow       dump the debug control flow section
+       h/H +/-hllsymbols               dump high-level language symbols
+       m/M +/-modules                  dump modules list
+       n/N +/-note                     dump all .note sections
+       s/S +/-sections                 dump sections list
+       y/Y +/-symbols                  dump low-level symbols
+  -L --source-lookup-path[=<path>]   specify an additional source file
+                                     location. No path means skip the original
+                                     build path. As last attempt the current
+                                     dir will be searched
+  -P --print-mangled-symbols         print mangled C++ function and variable
+                                     names
+  -S --symbols[=<type>]              specify symbolic dump (default: asm)
+       a   asm                         display assembly symbols in code dumps
+       h   hll                         display HLL symbols in code dumps
+       n   none                        display plain addresses in code dumps
+  -T --output-type[=<type>]          overall output format (default: text)
+       t   text                        output human-readable text
+       x   xml                         output XML
+  -V --version                       display version information
+  -X --xml-base-filename             issue only the base file name in the XML
+                                     output
+  -b --blank-out[=<flag>]            blank out any addresses (or labels)
+                                     (default: L)
+                                     lowercase/+ enables, uppercase/- disables:
+       l/L +/-labels                   blank out hexadecimal addresses and
+                                       labels
+  -c --class[=<class>]               sections to dump (default: all)
+       a   all                         dump all sections' contents
+       c   code                        dump code sections' contents
+       d   data                        dump data sections' contents
+  -e --expand-symbols[=<flag>,...]   expand all struct, union and array symbols
+                                     in the HLL symbol dump. The option can be
+                                     specified more than once (default: BFGN)
+                                     lowercase/+ enables, uppercase/- disables:
+       b/B +/-basic-types              expand arrays with basic C types
+       f/F +/-fullpath                 include the full path to the field level
+       g/G +/-gap-info                 insert gap markers where data isn't
+                                       consecutive
+       n/N +/-nesting-indicator        print nesting bars
+  -f --option-file=<filename>,...    read command-line options from the
+                                     specified file
+  -h --help[=<item>]                 show usage
+       o   options                     show extended option descriptions
+  -i --disassembly-intermix[=<flag>] intermix assembly with HLL source code
+                                     (default: S)
+                                     lowercase/+ enables, uppercase/- disables:
+       s/S +/-single-line              emit a single source line per
+                                       instruction
+  -o --output=<filename>             write output to the specified file
+  -r --disassembly-without-encoding  do not emit the address and encoding in
+                                     the disassembly of a code section
+  -s --sections=<name>[,<name>...],...
+                                     specify sections to dump by name
+  -x --hex                           dump ELF sections hexadecimally
+     --call-graph-elf-mode           force using the ELF symbols for the call
+                                     graph even when DWARF debug info is
+                                     present
+     --call-graph-root=<function>    specify the address or function name where
+                                     to start the call graph (default: main)
+     --copy-table                    use the copy table to translate
+                                     disassembly addresses or scan run-time
+                                     copied functions in the call graph
+     --core-list                     dump the list of accessed TriCore cores
+     --diag=[<fmt>:]{all|<msg>[-<msg>],...}
+                                     display a description of one or more
+                                     diagnostic messages using the specified
+                                     format: html, rtf or text (default)
+     --mcs-section=<name>,...        specify an extra section name to recognize
+                                     MCS sections when disassembling
+     --pcp-section=<name>,...        specify an extra section name to recognize
+                                     PCP sections when disassembling
+
+Long options, starting with --, may be abbreviated.  The argument separator
+character '=' is only used for long options, and should be omitted when the
+option argument is specified separately.

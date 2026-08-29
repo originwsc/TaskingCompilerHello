@@ -1,0 +1,180 @@
+﻿Usage: cctc [options] files
+Summary of options:
+  -?   --help[=<item>,...]           show option summary, or extended info
+         o   options                   show extended option descriptions
+  -C   --cpu=<type>                  select target CPU
+  -D   --define=<macro>[=<value>]    define preprocessor macro
+  -E   --preprocess[=<flag>,...]     preprocess only (default: CILMP)
+                                     lowercase/+ enables, uppercase/- disables:
+         c/C +/-comments               keep comments
+         i/I +/-includes               show included source files
+         l/L +/-list                   generate a list of macro definitions
+         m/M +/-make                   generate dependencies for make
+         p/P +/-noline                 strip #line source position info
+  -H   --include-file=<file>,...     include file at the start of a compilation
+  -I   --include-directory=<dir>     add include directory
+  -L   --library-directory[=<dir>]   add library directory
+  -U   --undefine=<macro>            remove preprocessor macro
+  -V   --version                     display version header only
+  -Wa  --pass-assembler=<option>     pass option directly to the assembler
+  -Wc  --pass-c=<option>             pass option directly to the C compiler
+  -Wcp --pass-c++=<option>           pass option directly to the C++ compiler
+  -Wl  --pass-linker=<option>        pass option directly to the linker
+  -c   --create[=<stage>]            select final output type (default: o)
+         c   intermediate-c            create (intermediate) C file(s)
+         l   relocatable               create relocatable output file
+         m   mil                       create mil file(s)
+         o   object                    create object file(s)
+         s   assembly                  create assembly file(s)
+  -d   --lsl-file=<file>,...         linker script file
+  -f   --option-file=<file>,...      read command line information from file
+  -g   --debug-info[=<flag>]         enable symbolic debug information
+         1                             emit small set of debug information
+         2                             emit default symbolic debug information
+         3                             emit full symbolic debug information
+         a   all                       alias for -g3
+         c   small                     alias for -g1
+         d   default                   alias for -g2
+  -g   --debug-info                  alias for -g2
+  -k   --keep-output-files           keep output files after errors
+  -l   --library=<lib>               add library
+  -n   --dry-run                     verbose output and suppress execution
+  -o   --output=<file>               set output file name
+  -p   --profile[=<flags>,...]       profiling
+                                     lowercase/+ enables, uppercase/- disables:
+         b/B +/-block                  block counters
+         c/C +/-callgraph              call graph
+         f/F +/-function               function counters
+         g                             alias for -pBcFStI
+         i/I +/-interrupt              exclude interrupt time
+         s/S +/-static                 static profile generation
+         t/T +/-time                   function timers
+  -p   --profile                     alias for -pBCfSTI
+  -t   --keep-temporary-files        do not delete intermediate output files
+  -u   --uchar                       char defaults to unsigned
+  -v   --verbose                     verbose output
+  -w   --no-warnings[=<nr>[-<nr>],...]
+                                     suppress all or specific warnings
+       --address-size=<num>          set address size for IHEX [1|2|4] or SREC
+                                     [2|3|4] files
+       --c++=<year>                  ISO C++ standard: 03, 11, 14 (default: 14)
+       --case-insensitive            case insensitive identifiers
+       --check                       check the source, but don't generate code
+       --command-file=<filename>     read the rename section commands from the
+                                     file
+       --control-flow-info           generate control flow information
+       --core=<value>                the core architecture the code is intended
+                                     for (default is TC1.3) (default: tc1.3)
+             tc1.3                     TriCore1.3   architecture
+             tc1.3.1                   TriCore1.3.1 architecture
+             tc1.6                     TriCore1.6   architecture
+             tc1.6.2                   TriCore1.6.2 architecture
+             tc1.6.x                   TriCore1.6.x architecture
+       --cpu-list[=<pattern>]        display a list of target CPU ids to use
+                                     with the -C/--cpu option
+       --data-reference-modification-file=<filename>
+                                     execute the commands from the file to
+                                     modify data references
+       --dep-file[=<file>]           also generate dependencies for make
+       --diag=[<fmt>:]{all|<nr>,...} display a description of one or more
+                                     diagnostic messages using the specified
+                                     format: html, rtf or text (default)
+       --eabi=<flag>,...             control EABI compliancy (default: bcfhnsw)
+                                     lowercase/+ enables, uppercase/- disables:
+         b/B +/-bitfield-align         base type alignment for 0-size bit-field
+         c/C +/-char-bitfield          access char bit-field as a byte
+         f/F +/-float                  allow treating 'double' as 'float'
+         h/H +/-half-word-align        allow half-word alignment
+         n/N +/-no-clear               allow the use of option --no-clear
+         s/S +/-structure-return       allow structure-return optimization
+         w/W +/-word-struct-align      word align structures and unions larger
+                                       than or equal to 64-bit
+       --eabi-compliant              the code generated will adher to the EABI
+                                     whereever possible
+       --error-file                  redirect all diagnostic messages
+       --error-limit=<number>        set maximum number of errors (default: 42)
+       --exceptions                  enable C++ exception handling
+       --force-c                     treat C++ files as C files
+       --force-c++                   force C++ compilation and linking
+       --force-munch                 force invocation of C++ muncher
+       --format=<type>               set linker output format [ihex|srec]
+       --fp-model[=<flag>,...]       floating-point model (default: cflnrSTz)
+         0                             alias for --fp-model=CFLNRStZ (strict)
+         1                             alias for --fp-model=cFLNRSTZ (precise)
+         2                             alias for --fp-model=cFlnrSTz (fast-dp)
+         3                             alias for --fp-model=cflnrSTz (fast-sp)
+                                     lowercase/+ enables, uppercase/- disables:
+         c/C +/-contract               allow expression contraction
+         f/F +/-float                  treat 'double' as 'float'
+         l/L +/-fastlib                allow less precise library functions
+         n/N +/-nonan                  allow optimizations to ignore NaN/Inf
+         r/R +/-rewrite                allow expression rewriting
+         s/S +/-soft                   use software floating point library
+         t/T +/-trap                   support trapping on exceptions
+         z/Z +/-negzero                ignore sign of -0.0
+       --global-type-checking        enable global type checking
+       --ignore-default-library-path ignore the default search path for
+                                     libraries
+       --instantiate=<type>          C++ instantiation mode
+       --integer-enumeration         always use 32-bit integers for enumeration
+       --io-streams                  enable C++03 I/O streams (also enables
+                                     exceptions)
+       --iso=<year>                  ISO C standard (90, 99, 11) (default: 11)
+       --link-only                   link only, no locating
+       --list-files[=<file>]         generate assembler list files
+       --lsl-core=<name>             Select core name, as specified in LSL
+                                     file, for current task (default: vtc)
+             tc0                       core 0
+             tc1                       core 1
+             tc2                       core 2
+             tc3                       core 3
+             tc4                       core 4
+             tc5                       core 5
+             vtc                       all cores
+       --make-target[=<name>]        specify target name for -Em/--dep-file
+                                     output
+       --mil-link                    link the MIL representation of all modules
+       --mil-split[=<file>,...]      as --mil-link, also split into .ms files
+       --mmu-on                      when an MMU is present this indicates if
+                                     it is used
+       --mmu-present                 indicates the presence of an MMU
+       --new-task=<core>,{<obj>|<out>|<lib>},...
+                                     link object, out and/or lib files into one
+                                     task for core <core>
+       --no-default-libraries        do not include default list of libraries
+       --no-exceptions               disable C++ exception handling
+       --no-map-file                 do not generate linker map file
+       --no-preprocessing-only       force full compilation
+       --pic[=Ax/Ay]                 produce a position independent component
+                                     (default: A8/A9)
+       --processors[=<file>]         read additional processors.xml file
+       --show-c++-warnings           show C and assembly warnings for C++
+                                     compilations
+       --signed-bitfields            treat "int" bitfield as signed
+       --silicon-bug=<arg>,...       enable silicon bug workaround
+       --static                      treat external definitions as "static"
+       --symbol-renaming-file=<filename>
+                                     execute the commands from the file to
+                                     rename ELF symbols
+       --tasking-sfr                 include the sfr file as indicated by -C
+                                     option
+       --user-mode=<value>           the user mode the processor will run in
+                                     (default is kernel mode) (default: kernel)
+             kernel                    kernel supervisor mode
+             user-0                    user-0 unprivileged mode
+             user-1                    user-1 privileged mode
+       --vared-info-section=<flag>   determine what will be copied from the
+                                     data reference modification command file
+                                     into the new section named .VarEd_Info
+                                     (default: full)
+             compact                   leave out comments and most white space
+             executed-commands         copy only the executed commands
+             full                      copy the entire data reference
+                                       modification command file
+             no-section                do not create the .VarEd_Info section
+       --warnings-as-errors[=<nr>[-<nr>],...]
+                                     treat all or specific warnings as errors
+
+Long options, starting with --, may be abbreviated.  The argument separator
+character '=' is only used for long options, and should be omitted when the
+option argument is specified separately.

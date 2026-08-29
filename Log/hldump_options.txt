@@ -1,0 +1,190 @@
+﻿
+List of options
+===============
+
+Long options, starting with --, may be abbreviated.  The argument separator
+character '=' is only used for long options, and should be omitted when the
+option argument is specified separately.
+
+-?                                   show usage
+
+Shows usage information
+
+-A --adx-format[=<flag(s)>,...]      dump ELF or DWARF symbolic info in ADX
+                                     address list format. By default the DWARF
+                                     info is used. (default: RE)
+                                     lowercase/+ enables, uppercase/- disables:
+     e/E +/-force-elf-mode             force using the ELF symbols instead of
+                                       the DWARF debug info
+     r/R +/-reduced                    do not output tags CATEGORY,
+                                       COMP-UNIT-NAME, COMP-UNIT-DIR and
+                                       CALLED-SYMBOLS
+
+Dump the application data in ADX address list format.
+
+The e sub-option forces using the ELF symbols instead of the DWARF debug info, resulting in
+reduced info.
+
+The r sub-option inhibits the tags CATEGORY, COMP-UNIT-NAME, COMP-UNIT-DIR and CALLED-SYMBOLS from being printed in the XML output
+
+-F --dump-format[=<flag>,...]        specify dump formats (default: CdFhmnsy)
+     0                                 alias for -FCDFHMNSY
+     1                                 alias for -FCDFhMNSY
+     2                                 alias for -FCdFHMNSY
+     3                                 alias for -Fcdfhmnsy
+                                     lowercase/+ enables, uppercase/- disables:
+     c/C +/-callgraph                  dump executable's call graph
+     d/D +/-dump                       dump sections' contents
+     f/F +/-debug-control-flow         dump the debug control flow section
+     h/H +/-hllsymbols                 dump high-level language symbols
+     m/M +/-modules                    dump modules list
+     n/N +/-note                       dump all .note sections
+     s/S +/-sections                   dump sections list
+     y/Y +/-symbols                    dump low-level symbols
+
+With this option you can control the dump format
+
+With this option you can control the dump format
+
+-L --source-lookup-path[=<path>]     specify an additional source file
+                                     location. No path means skip the original
+                                     build path. As last attempt the current
+                                     dir will be searched
+
+Specify an additional source file location.
+When not specifying a path the directory where the file was built will not be checked.
+Finally the current working directory will be searched.
+
+-P --print-mangled-symbols           print mangled C++ function and variable
+                                     names
+
+Print mangled C++ function and variable names
+
+-S --symbols[=<type>]                specify symbolic dump (default: asm)
+     a   asm                           display assembly symbols in code dumps
+     h   hll                           display HLL symbols in code dumps
+     n   none                          display plain addresses in code dumps
+
+With this option you can control symbolic dumping
+
+-T --output-type[=<type>]            overall output format (default: text)
+     t   text                          output human-readable text
+     x   xml                           output XML
+
+With this option you can select the output format of all text.
+
+-V --version                         display version information
+
+Display version information
+
+-X --xml-base-filename               issue only the base file name in the XML
+                                     output
+
+Issue only the base file name in the XML output
+
+-b --blank-out[=<flag>]              blank out any addresses (or labels)
+                                     (default: L)
+                                     lowercase/+ enables, uppercase/- disables:
+     l/L +/-labels                     blank out hexadecimal addresses and
+                                       labels
+
+Blank out addresses and optionally labels in all dump phases.
+
+-c --class[=<class>]                 sections to dump (default: all)
+     a   all                           dump all sections' contents
+     c   code                          dump code sections' contents
+     d   data                          dump data sections' contents
+
+With this option you can select the sections to be dumped.
+
+-e --expand-symbols[=<flag>,...]     expand all struct, union and array symbols
+                                     in the HLL symbol dump. The option can be
+                                     specified more than once (default: BFGN)
+                                     lowercase/+ enables, uppercase/- disables:
+     b/B +/-basic-types                expand arrays with basic C types
+     f/F +/-fullpath                   include the full path to the field level
+     g/G +/-gap-info                   insert gap markers where data isn't
+                                       consecutive
+     n/N +/-nesting-indicator          print nesting bars
+
+Expand all struct, union and array symbols in the HLL symbol dump.
+
+-f --option-file=<filename>,...      read command-line options from the
+                                     specified file
+
+Read command-line options from the specified file
+
+-h --help[=<item>]                   show usage
+     o   options                       show extended option descriptions
+
+Shows usage information
+
+-i --disassembly-intermix[=<flag>]   intermix assembly with HLL source code
+                                     (default: S)
+                                     lowercase/+ enables, uppercase/- disables:
+     s/S +/-single-line                emit a single source line per
+                                       instruction
+
+Intermix assembly with HLL source code
+
+The source line closest to the instruction is displayed.
+
+-o --output=<filename>               write output to the specified file
+
+Write output to the specified file
+
+-r --disassembly-without-encoding    do not emit the address and encoding in
+                                     the disassembly of a code section
+
+In order to aid in rebuilding the disassembled code section, hide the address and encoding in the disassembly.
+
+-s --sections=<name>[,<name>...],... specify sections to dump by name
+
+With this option you can control which sections are dumped
+
+-x --hex                             dump ELF sections hexadecimally
+
+Dump ASCII representation of all ELF sections
+
+   --call-graph-elf-mode             force using the ELF symbols for the call
+                                     graph even when DWARF debug info is
+                                     present
+
+Force the call graph to use the ELF symbols instead of the DWARF debug info,
+e.g. when dumping from an assembly function.
+
+   --call-graph-root=<function>      specify the address or function name where
+                                     to start the call graph (default: main)
+
+Specify the address or function name where to start the call graph
+
+   --copy-table                      use the copy table to translate
+                                     disassembly addresses or scan run-time
+                                     copied functions in the call graph
+
+Use the copy table information to "move" disassembly.
+
+   --core-list                       dump the list of accessed TriCore cores
+
+With this option hldumptc will list the cores being used in the ELF file.
+
+   --diag=[<fmt>:]{all|<msg>[-<msg>],...}
+                                     display a description of one or more
+                                     diagnostic messages using the specified
+                                     format: html, rtf or text (default)
+
+With this option the compiler displays a description and explanation
+of the specified error message(s) on stdout (usually the screen). The
+compiler does not compile any files. If you want the output in a file,
+use output redirection.
+
+   --mcs-section=<name>,...          specify an extra section name to recognize
+                                     MCS sections when disassembling
+
+With this option you specify additional MCS section names used to recognize MCS sections when disassembling.
+
+   --pcp-section=<name>,...          specify an extra section name to recognize
+                                     PCP sections when disassembling
+
+With this option you specify additional PCP section names used to recognize PCP sections when disassembling.
+

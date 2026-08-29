@@ -142,6 +142,53 @@ for src in SOURCE_FILES:
 
 ---
 
+## 9. 维护两个列表 vs 自动派生（坑: 忘记同步 SOURCE_DIRS 和 INCLUDE_DIRS）
+
+**现象**: 新增了 `Bsw` 目录，只加了 `SOURCE_DIRS` 没加 `INCLUDE_DIRS`，编译报 `.h` 找不到；或者只加了 `INCLUDE_DIRS` 没加 `SOURCE_DIRS`，`.c` 文件没被编译。
+
+**原因**: 需要维护两个独立列表，容易忘记同步。
+
+**解决**: 让 `INCLUDE_DIRS` 自动从 `SOURCE_DIRS` 派生:
+
+```python
+# ❌ 错误: 两个列表分别维护，容易漏掉一个
+SOURCE_DIRS = [r'App', r'Bsw']
+INCLUDE_DIRS = ['.', r'App']   # 忘了加 Bsw!
+
+# ✅ 正确: 自动派生，只需维护一个列表
+SOURCE_DIRS = [r'App', r'Bsw']
+INCLUDE_DIRS = ['.'] + [d for d in SOURCE_DIRS]
+```
+
+如果某个目录只有头文件没有源文件（如 `Config`），再手动追加:
+
+```python
+INCLUDE_DIRS = ['.'] + [d for d in SOURCE_DIRS] + [r'Config']
+```
+
+---
+
+## 10. SCons banner 信息硬编码 vs 变量（坑: 复制到新工程后 banner 信息没更新）
+
+**现象**: 复制 SConstruct 到新工程，改了 `PROJECT_NAME`，但 banner 打印的还是旧项目名。
+
+**原因**: banner 中直接写了字符串字面量，而不是使用变量。
+
+**解决**: banner 中所有信息都引用变量，不要写死:
+
+```python
+# ❌ 错误: 写死了
+print('    名称:        Hello')
+print('    目标芯片:    tc36x')
+
+# ✅ 正确: 引用变量
+print('    名称:        %s' % PROJECT_NAME)
+print('    目标芯片:    %s' % TARGET_CHIP)
+print('    源文件数:    %d' % len(SOURCE_FILES))
+```
+
+---
+
 ## 快速自查清单
 
 复制 SConstruct 到新工程时，检查以下 4 项:

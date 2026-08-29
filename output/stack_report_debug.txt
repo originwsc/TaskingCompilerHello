@@ -1,0 +1,189 @@
+====================================================================
+  TASKING TriCore 栈使用分析报告
+====================================================================
+  项目:      Hello
+  构建变体:  debug
+  生成时间:  2026-08-29 11:49:09
+====================================================================
+
+[1] 分析产物
+--------------------------------------------------------------------
+  ELF:     E:\workspace\scons\Hello\output\Hello.elf  (101704 (99.3 KB))
+  MAP:     E:\workspace\scons\Hello\output\Hello.map  (93527 (91.3 KB))
+
+[2] 栈空间配置
+--------------------------------------------------------------------
+  istack_tc0            1024 (1.0 KB)  (interrupt)
+  ustack_tc0            16384 (16.0 KB)  (user)
+
+  栈空间总计:                17408 (17.0 KB)
+
+[3] 链接器估算的栈使用
+--------------------------------------------------------------------
+  栈名                          已使用      递归  入口点
+  -------------------- ---------- ------  --------------------
+  ustack_tc0                   24      no  _START
+  istack_tc0                    0      no  
+
+  ⚠ 注意: 链接器估算仅涵盖静态可达路径,
+    不包含间接调用、函数指针、中断嵌套等动态场景。
+
+[4] 内存使用
+--------------------------------------------------------------------
+  区域                                   Code       Data      Total
+  ------------------------------ ---------- ---------- ----------
+  mpe:dlmucpu0                            0        380 65536 (64.0 KB)
+  mpe:dspr0                               0        128 196608 (192.0 KB)
+  mpe:dspr1                               0        128 196608 (192.0 KB)
+  mpe:pflash0                    2492 (2.4 KB) 8509 (8.3 KB) 3145728 (3072.0 KB)
+  mpe:vtc:linear                 11001 (10.7 KB)        380 656512 (641.1 KB)
+  ------------------------------ ---------- ---------- ----------
+  总 计                            11001 (10.7 KB)        508          0
+
+[5] 函数代码体积 Top
+--------------------------------------------------------------------
+  Top 30 大函数 (按代码体积排序):
+
+    排名  函数                               文件                           大小
+  ----  -------------------------------- -------------------- ----------
+     1  cstart._start                    cstart.obj                  816
+     2  _c_init_entry.libcsw_fpu         cinit.o                     288
+     3  _dofls.libcsw_fpu                _flsbuf.o                   164
+     4  sync_on_halt._sync_on_halt       sync_on_halt.obj            130
+     5  _dbg_trap_tc.libcsw_fpu          dbg_trap.o                  122
+     6  _fflush.libcsw_fpu               fflush.o                    106
+     7  _ldmst_copy_byte.libcsw_fpu      cinit.o                      68
+     8  _ldmst_clear_byte.libcsw_fpu     cinit.o                      46
+     9  _doprint.libcsw_fpu              _doprint_noarg.o             44
+    10  fclose.libcsw_fpu                fclose.o                     40
+    11  printf.libcsw_fpu                printf.o                     38
+    12  fputc.libcsw_fpu                 fputc.o                      32
+    13  _doclose.libcsw_fpu              _iob.o                       30
+    14  _io_putc.libcsw_fpu              _io_putc.o                   30
+    15  _dbg_cacheawi.libcsw_fpu         dbg_trap.o                   28
+    16  cstart.__init_sp                 cstart.obj                   26
+    17  _host_lseek.libcsw_fpu           dbg.o                        22
+    18  _host_write.libcsw_fpu           dbg.o                        22
+    19  exit.libcsw_fpu                  exit.o                       22
+    20  _host_close.libcsw_fpu           dbg.o                        20
+    21  _trapassertion.libcsw_fpu        trapass.o                    20
+    22  _trapbus.libcsw_fpu              trapbus.o                    20
+    23  _trapcontext.libcsw_fpu          trapcont.o                   20
+    24  _trapinstruction.libcsw_fpu      trapinst.o                   20
+    25  _trapnmi.libcsw_fpu              trapnmi.o                    20
+    26  _trapprotection.libcsw_fpu       trapprot.o                   20
+    27  Hello.main                       Hello.obj                    18
+    28  _exit.libcsw_fpu                 dbg__exit.o                  18
+    29  _trapmmu.libcsw_fpu              trapmmu.o                    18
+    30  _c_init.libcsw_fpu               cinit.o                      12
+
+  代码段总计: 2492 (2.4 KB)  (54 个函数)
+
+[6] 每个函数的栈消耗
+--------------------------------------------------------------------
+  (所有函数栈消耗为 0, 或 DWARF 信息中无栈消耗数据)
+  → 编译器优化可能消除了栈帧, 或编译选项未生成栈使用信息
+  → 建议: 使用 -O0 编译可保留更完整的栈使用信息
+
+[7] 调用图分析
+--------------------------------------------------------------------
+  总调用关系数: 49
+  总函数数:     47
+  入口点:       _START, ___start_function_end, __main_function_end, _start, _sync_on_halt
+
+  Top 10 被调用最多的函数:
+  函数                                     调用次数
+  -------------------------------- ----------
+  exit                                     10
+  _dbg_trap_tc                              4
+  _weakstub                                 3
+  _c_init                                   2
+  main                                      2
+  _host_write                               2
+  _fflush                                   2
+  _doclose                                  2
+  _exit                                     2
+  _Exit                                     2
+
+  Top 10 调用最多的函数:
+  函数                                     调用次数
+  -------------------------------- ----------
+  exit                                      4
+  ___start_function_end                     4
+  _start                                    3
+  fclose                                    3
+  ____init_sp_function_end                  3
+  _dofls                                    2
+  _c_init_entry                             2
+  _fflush                                   2
+  _dbg_trap_tc                              2
+  _host_write                               1
+
+[8] 调用链最坏情况栈深度
+--------------------------------------------------------------------
+  入口点: _START, main
+
+  Top 20 调用链栈深度最大的函数:
+  函数                                      栈深度      自身栈      调用链长度
+  -------------------------------- ---------- -------- ----------
+  _START                                    0        0          1
+  __init_sp                                 0        0          2
+  ____init_sp_function_end                  0        0          3
+  exit                                      0        0          4
+  _Exit                                     0        0          5
+  _exit                                     0        0          5
+  _dbg_trap_tc                              0        0          6
+  _dbg_trap                                 0        0          7
+  _dbg_cacheawi                             0        0          7
+  _doclose                                  0        0          5
+  fclose                                    0        0          6
+  _host_close                               0        0          7
+  _weakstub                                 0        0          7
+  _fflush                                   0        0          7
+  _host_lseek                               0        0          8
+  _host_write                               0        0          8
+  main                                      0        0          4
+  printf                                    0        0          5
+  _doprint                                  0        0          6
+  _io_putc                                  0        0          7
+
+  ⚠ 注意: 栈深度 = 从入口点到该函数调用链上所有函数栈消耗之和
+    此分析基于静态调用图, 不包含:
+      - 函数指针 / 虚函数调用
+      - 中断嵌套
+      - 递归函数 (已跳过循环检测)
+
+[9] ELF 尺寸 (elfsize)
+--------------------------------------------------------------------
+  ROM 总计:              11001 (10.7 KB)
+    ├─ 代码:      2492 (2.4 KB)
+    └─ ROM 数据:  8509 (8.3 KB)
+  RAM 总计:              28156 (27.5 KB)
+
+[10] 栈溢出风险评估
+--------------------------------------------------------------------
+  [正常] ustack_tc0: 已使用 0% (24 / 16384 (16.0 KB))
+  [正常] istack_tc0: 已使用 0% (0 / 1024 (1.0 KB))
+
+[11] 建议与注意事项
+--------------------------------------------------------------------
+  [静态分析的局限性]
+  • 链接器静态估算仅覆盖静态可达路径
+  • 不包含以下场景:
+    - 函数指针 / 虚函数调用链
+    - 中断嵌套 (ISR 内调用函数)
+    - 递归函数 (实际栈使用可能 > 估算)
+
+  [安全建议]
+  • 建议留出 30-50% 的栈空间余量
+  • 对于栈使用率超过 50% 的情况, 建议增加栈空间或优化代码
+
+  [深入分析手段]
+  • 代码审查: 检查大局部变量 / 深层调用链
+  • 运行时监控: 在任务入口/出口填充栈哨兵 (0xDEAD), 运行时检测最大使用深度
+  • 硬件 MPU 保护: 配置 MPU 保护栈溢出, 触发 Trap 后定位
+  • 使用 TASKING 的 --stack-usage 编译选项生成 .sa 文件, 获取更详细的栈分析
+
+====================================================================
+  报告结束
+====================================================================

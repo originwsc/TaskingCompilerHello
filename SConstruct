@@ -5,9 +5,8 @@ SCons build script for TASKING TriCore project.
 
 适配大型 AUTOSAR 代码库的 CI/CD 编译环境。
 - 编译器: TASKING VX-toolset for TriCore (商业版)
-- 目标芯片: Infineon TriCore TC3xx (tc36x)
-- 构建变体: debug / release
 - 所有产物路径均以 SConstruct 所在目录为基准
+- 配置项见下方 PROJECT_NAME / TARGET_CHIP / SOURCE_DIRS 等变量
 
 用法:
     scons variant=debug          # Debug 构建 (默认)
@@ -99,6 +98,7 @@ BUILD_DIR = os.path.join(PROJECT_DIR, 'build', 'tasking', VARIANT)
 # 新增目录直接往 SOURCE_DIRS 里添加即可
 SOURCE_DIRS = [
     r'App',
+    r'Bsw',
 ]
 
 # 需要排除的源文件 (可选, 匹配路径末尾)
@@ -118,10 +118,9 @@ if SOURCE_EXCLUDE_PATTERNS:
     ]
 
 # --- 1.3 头文件搜索路径 ---
-INCLUDE_DIRS = [
-    '.',
-    r'App',
-]
+# ★ 自动从 SOURCE_DIRS 派生, 无需重复维护
+# ★ 如果某个头文件目录内没有 .c 文件, 手动追加即可
+INCLUDE_DIRS = ['.'] + [d for d in SOURCE_DIRS]
 
 # --- 1.4 链接脚本 ---
 LSL_FILE = os.path.join(PROJECT_DIR, 'Linker', 'Hello.lsl')
@@ -266,7 +265,8 @@ env.SideEffect(hex_target, elf_target)
 
 OUTPUT_DIR = os.path.join(PROJECT_DIR, 'output')
 
-def _copy_to_output(target, source, env):
+def _copy_to_output_and_analyze(target, source, env):
+    """复制产物到 output/ 目录, 并运行栈使用分析工具。"""
     src_dir = BUILD_DIR
     dst_dir = OUTPUT_DIR
     if not os.path.exists(dst_dir):
@@ -289,10 +289,32 @@ def _copy_to_output(target, source, env):
         print('           - %s' % name)
     print('')
 
+    # ---- 运行栈使用分析工具 ----
+    analyzer_script = os.path.join(PROJECT_DIR, 'tools', 'stack_analyzer.py')
+    if not os.path.isfile(analyzer_script):
+        print('  [Stack] 警告: 栈分析工具未找到: %s' % analyzer_script)
+        return
+    print('  [Stack] 正在生成栈使用分析报告...')
+    import subprocess
+    py_exe = sys.executable if hasattr(sys, 'executable') else 'python'
+    ret = subprocess.run(
+        [py_exe, analyzer_script,
+         '--project-dir=' + PROJECT_DIR,
+         '--variant=' + VARIANT,
+         '--tasking-bin=' + TASKING_INFO['bin_dir'],
+         '--output-dir=' + OUTPUT_DIR],
+        cwd=PROJECT_DIR,
+        capture_output=False,
+        text=False,
+    )
+    if ret.returncode != 0:
+        print('  [Stack] 警告: 栈分析工具返回错误码 %d' % ret.returncode)
+    print('')
+
 output_stamp = env.Command(
     target=os.path.join(OUTPUT_DIR, '.output_stamp'),
     source=elf_target,
-    action=_copy_to_output,
+    action=_copy_to_output_and_analyze,
 )
 env.AlwaysBuild(output_stamp)
 
@@ -302,7 +324,7 @@ env.AlwaysBuild(output_stamp)
 
 env.Default(elf_target, output_stamp)
 
-output_alias = env.Alias('output', elf_target, _copy_to_output)
+output_alias = env.Alias('output', [elf_target, output_stamp])
 env.AlwaysBuild(output_alias)
 
 env.Clean(elf_target, [BUILD_DIR, OUTPUT_DIR])

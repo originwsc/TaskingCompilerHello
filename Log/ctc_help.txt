@@ -1,0 +1,313 @@
+﻿Usage: ctc [options] file ...
+Summary of options:
+  --                                 stop option processing
+  -? --help[=<item>,...]             show option summary, or extended info:
+       i   intrinsics                  show the list of intrinsic functions
+       o   options                     show extended option descriptions
+       p   pragmas                     show the list of supported pragmas
+       t   typedefs                    show the list of predefined typedefs
+  -A --language[=<flag>,...]         control language extensions (default:
+                                     GKpVx)
+                                     lowercase/+ enables, uppercase/- disables:
+       g/G +/-gcc                      enable a number of gcc extensions
+       k/K +/-kanji                    support for Shift JIS Kanji in strings
+       p/P +/-comments                 // comments in ISO C90 mode
+       v/V +/-volatile                 don't optimize across volatile access
+       x/X +/-strings                  relaxed const check for string literals
+  -A --language                      alias for -AGKPVX
+  -D --define=<macro>[=<def>]        define preprocessor macro
+  -E --preprocess[=<flag>,...]       preprocess only (default: CILMP)
+                                     lowercase/+ enables, uppercase/- disables:
+       c/C +/-comments                 keep comments
+       i/I +/-includes                 show included source files
+       l/L +/-list                     generate a list of macro definitions
+       m/M +/-make                     generate dependencies for make
+       p/P +/-noline                   strip #line source position info
+  -H --include-file=<file>,...       include file at the start of the
+                                     compilation
+  -I --include-directory=<dir>,...   add directory to include file search path
+  -N --default-near-size[=<value>]   max size (in bytes) for data elements that
+                                     are default located in __near sections
+                                     (default: 8)
+  -O --optimize[=<flag>,...]         specify optimization level (default: 2)
+       0                               alias for -OaCEFGIKLMNOPRSUVWY,-predict
+       1                               alias for -OaCefgIKLMNOPRSUVWy,+predict
+       2                               alias for -OacefgIklMnoprsUvwy,+predict
+       3                               alias for -Oacefgiklmnoprsuvwy,+predict
+                                     lowercase/+ enables, uppercase/- disables:
+       a/A +/-coalesce                 register coalescer
+       c/C +/-cse                      common subexpression elimination (PRE)
+       e/E +/-expression               expression simplification
+       f/F +/-flow                     control flow simplification
+       g/G +/-glo                      generic assembly code optimizations
+       i/I +/-inline                   automatic function inlining
+       k/K +/-schedule                 instruction scheduler
+       l/L +/-loop                     loop transformations
+       m/M +/-simd                     perform SIMD optimizations
+       n/N +/-align-loop               align loop bodies, to lower the number
+                                       of fetches.
+       o/O +/-forward                  forward store
+       p/P +/-propagate                constant propagation
+       r/R +/-compact                  code compaction (reverse inlining)
+       s/S +/-subscript                subscript strength reduction
+       u/U +/-unroll                   unroll small loops
+       v/V +/-ifconvert                convert IF statements using predicates
+       w/W +/-pipeline                 software pipelining
+       y/Y +/-peephole                 peephole optimizations
+           +/-predict                  branch prediction
+  -O --optimize                      alias for -O2
+  -R --rename-sections[=<name>]      rename sections
+  -U --undefine=<macro>              remove preprocessor macro
+  -V --version                       display version header only
+  -Y --default-a1-size[=<value>]     max size (in bytes) for rodata elements
+                                     that are default located in __a1 sections
+                                     (default: 0)
+  -Z --default-a0-size[=<value>]     max size (in bytes) for data elements that
+                                     are default located in __a0 sections
+                                     (default: 0)
+  -c --iso=<year>                    ISO C standard (90, 99, 11) (default: 11)
+  -f --option-file=<file>,...        read options from file
+  -g --debug-info[=<flag>]           enable symbolic debug information
+       1                               emit small set of debug information
+       2                               emit default symbolic debug information
+       3                               emit full symbolic debug information
+       a   all                         alias for -g3
+       c   small                       alias for -g1
+       d   default                     alias for -g2
+  -g --debug-info                    alias for -g2
+  -k --keep-output-files             keep output file after errors
+  -n --stdout                        send output to stdout
+  -o --output-file=<file>            specify output filename
+  -p --profile[=<flags>,...]         profiling
+                                     lowercase/+ enables, uppercase/- disables:
+       b/B +/-block                    block counters
+       c/C +/-callgraph                call graph
+       f/F +/-function                 function counters
+       g                               alias for -pBcFStI
+       i/I +/-interrupt                exclude interrupt time
+       s/S +/-static                   static profile generation
+       t/T +/-time                     function timers
+  -p --profile                       alias for -pBCfSTI
+  -r --runtime[=<flag>,...]          enable run-time checks
+                                     lowercase/+ enables, uppercase/- disables:
+       b/B +/-bounds                   bounds checking
+       c/C +/-case                     report unhandled case in a switch
+       m/M +/-malloc                   malloc consistency checks
+       s/S +/-stack                    check for stack overflow
+  -r --runtime                       alias for -rbcms
+  -s --source                        merge source code with assembly output
+  -t --tradeoff=<value>              tradeoff between speed (-t0) and size
+                                     (-t4) (default: 4)
+  -u --uchar                         char defaults to unsigned
+  -v --verbose                       generate additional informational
+                                     diagnostics
+  -w --no-warnings[=<nr>[-<nr>],...] suppress all warnings, or specific ones
+     --align=<value>                 pragma align <n> (default: 0)
+     --branch-target-align           generate alignment depending on assume_if
+                                     hints
+     --cache[=<dir>]                 cache output files (default: .)
+     --cert[={all|<name>[-<name>]},...]
+                                     enable individual CERT checks
+     --check                         check the source, but don't generate code
+     --code-core-association=<value> code core association
+           clone                       Multiple code instances each executed by
+                                       one core
+           private0                    One code instance excuted by core 0
+           private1                    One code instance excuted by core 1
+           private2                    One code instance excuted by core 2
+           private3                    One code instance excuted by core 3
+           private4                    One code instance excuted by core 4
+           private5                    One code instance excuted by core 5
+           private6                    One code instance excuted by core 6
+           private7                    One code instance excuted by core 7
+           share                       One code instance shared between cores
+     --code-section-alignment=<value>
+                                     Align code sections (default: 2)
+     --compact-max-size=<value>      maximum size of a match (default: 200)
+     --control-flow-info             generate control flow information
+     --core=<value>                  the core architecture the code is intended
+                                     for (default: tc1.3)
+           tc1.3                       TriCore1.3   architecture
+           tc1.3.1                     TriCore1.3.1 architecture, TriCore1.3.1
+                                       instructions may be generated
+           tc1.6                       TriCore1.6   architecture, TriCore1.6
+                                       instructions may be generated
+           tc1.6.2                     TriCore1.6.2 architecture, TriCore1.6.2
+                                       instructions may be generated
+           tc1.6.x                     TriCore1.6.x architecture, TriCore1.6.x
+                                       instructions may be generated
+     --data-core-association=<value> data core association
+           clone                       Multiple data instances each accessed by
+                                       one core
+           private0                    One data instance accessed by core 0
+           private1                    One data instance accessed by core 1
+           private2                    One data instance accessed by core 2
+           private3                    One data instance accessed by core 3
+           private4                    One data instance accessed by core 4
+           private5                    One data instance accessed by core 5
+           private6                    One data instance accessed by core 6
+           private7                    One data instance accessed by core 7
+           share                       One data shared between cores
+     --data-section-alignment=<value>
+                                     Align data sections (default: 0)
+     --dep-file[=<file>]             also generate dependencies for make
+     --diag=[<fmt>:]{all|<msg>[-<msg>],...}
+                                     display a description of one or more
+                                     diagnostic messages using the specified
+                                     format: html, rtf or text (default)
+     --eabi=<flag>,...               control EABI compliancy (default: bcfhnsw)
+                                     lowercase/+ enables, uppercase/- disables:
+       b/B +/-bitfield-align           base type alignment for 0-size bit-field
+       c/C +/-char-bitfield            access char bit-field as a byte
+       f/F +/-float                    allow treating 'double' as 'float'
+       h/H +/-half-word-align          allow half-word alignment
+       n/N +/-no-clear                 allow the use of option --no-clear
+       s/S +/-structure-return         allow structure-return optimization
+       w/W +/-word-struct-align        word align structures and unions larger
+                                       than or equal to 64-bit
+     --eabi-compliant                alias for --eabi=BCFHNSW
+     --error-file[=<file>]           redirect diagnostic messages to a file
+     --error-limit=<number>          set maximum number of errors (default: 42)
+     --fp-model[=<flag>,...]         floating-point model (default: cFlnrSTz)
+       0                               alias for --fp-model=CFLNRStZ (strict)
+       1                               alias for --fp-model=cFLNRSTZ (precise)
+       2                               alias for --fp-model=cFlnrSTz (fast-dp)
+       3                               alias for --fp-model=cflnrSTz (fast-sp)
+                                     lowercase/+ enables, uppercase/- disables:
+       c/C +/-contract                 allow expression contraction
+       f/F +/-float                    treat 'double' as 'float'
+       l/L +/-fastlib                  allow less precise library functions
+       n/N +/-nonan                    allow optimizations to ignore NaN/Inf
+       r/R +/-rewrite                  allow expression rewriting
+       s/S +/-soft                     use software floating-point library
+       t/T +/-trap                     support trapping on exceptions
+       z/Z +/-negzero                  ignore sign of -0.0
+     --global-type-checking          enable global type checking
+     --immediate-in-code             encode all immediate values into
+                                     instructions
+     --indirect                      all function calls are indirect
+     --indirect-runtime              all runtime function calls are indirect
+     --inline                        enable inlining for all functions
+     --inline-max-incr=<value>       maximum size increment inlining (in %)
+                                     (default: -1)
+     --inline-max-size=<value>       maximum size for functions to always
+                                     inline (default: -1)
+     --integer-enumeration           always use 32-bit integers for enumeration
+     --loop[=<flag>,...]             control loop optimizations (default:
+                                     cfistV)
+                                     lowercase/+ enables, uppercase/- disables:
+       c/C +/-cache                    loop align for cached memory or SPRAM
+       f/F +/-fusion                   loop fusion optimization
+       i/I +/-instructions             use loop body instruction threshold
+       s/S +/-size                     use loop body size threshold
+       t/T +/-time                     use loop body cycle threshold
+       v/V +/-value                    use alignment value or memory default
+     --loop-alignment=<value>        the alignment loop bodies get (4,8, 16 or
+                                     32) (default: 32)
+     --loop-cycle-threshold=<value>  loop body cycle threshold (default: 25)
+     --loop-instruction-threshold=<value>
+                                     loop body instruction threshold (default:
+                                     25)
+     --loop-size-threshold=<value>   loop body byte size threshold (default:
+                                     75)
+     --make-target=<name>            specify target name for -Em/--dep-file
+                                     output
+     --max-call-depth=<value>        maximum call depth, default infinite
+                                     (default: -1)
+     --mil                           generate intermediate MIL file
+     --mil-split[=<file>,...]        as --mil, also split output into .ms files
+     --misrac={all|<nr>[-<nr>]},...  enable individual MISRA C checks
+     --misrac-advisory-warnings      turn advisory rule violation into warning
+     --misrac-mandatory-warnings     turn mandatory rule violation into warning
+     --misrac-required-warnings      turn required rule violation into warning
+     --misrac-version=<year>         select MISRA C version: 1998, 2004 or 2012
+                                     (default: 2004)
+     --mmu-on                        when an MMU is present this indicates if
+                                     it is used
+     --mmu-present                   indicates the presence of an MMU
+     --no-clear                      don't clear uninitialized global/static
+                                     variables
+     --no-rtlib-calls                avoid run-time library calls
+     --no-stdinc                     skip the standard include files directory
+     --object-comment=<value>        add a comment section at the end of a
+                                     module, containing the text supplied
+     --pic[=Ax/Ay]                   generate position independent code
+                                     (default: A8/A9)
+     --relax-compact-name-check      relax code compaction name check
+     --relax-overlay-name-check      relax overlay name check
+     --section-name-with-module      user section naming includes module name
+     --section-name-with-symbol      user section naming includes symbol name
+     --sfr-access-instruction=<flag>,...
+                                     control instructions used for sfr accesses
+                                     (default: S)
+                                     lowercase/+ enables, uppercase/- disables:
+       s/S +/-stt                      control the generation of the ST.T
+                                       instruction
+     --signed-bitfields              treat "int" bitfield as signed
+     --silicon-bug=<arg>,...         Enable silicon bug workaround
+           all-tc1130                  alias for --silicon-bug=cpu-tc013,
+                                       cpu-tc048,cpu-tc060,cpu-tc065,cpu-tc068,
+                                       cpu-tc069,cpu-tc070,cpu-tc072,cpu-tc083,
+                                       cpu-tc094,cpu-tc095,cpu-tc096,cpu-tc104,
+                                       cpu-tc116
+           all-tc1164                  alias for --silicon-bug=all-tc1766
+           all-tc1166                  alias for --silicon-bug=all-tc1766
+           all-tc131                   alias for --silicon-bug=cpu-tc105,
+                                       cpu-tc106,cpu-tc108,cpu-tc109
+           all-tc1736                  alias for --silicon-bug=all-tc131
+           all-tc1762                  alias for --silicon-bug=all-tc1766
+           all-tc1764                  alias for --silicon-bug=all-tc1766
+           all-tc1766                  alias for --silicon-bug=cpu-tc013,
+                                       cpu-tc048,cpu-tc060,cpu-tc065,cpu-tc068,
+                                       cpu-tc069,cpu-tc070,cpu-tc072,cpu-tc083,
+                                       cpu-tc094,cpu-tc095,cpu-tc096,cpu-tc104,
+                                       cpu-tc105,cpu-tc108,cpu-tc109
+           all-tc1767                  alias for --silicon-bug=all-tc131
+           all-tc1792                  alias for --silicon-bug=all-tc1796
+           all-tc1796                  alias for --silicon-bug=cpu-tc013,
+                                       cpu-tc048,cpu-tc060,cpu-tc065,cpu-tc068,
+                                       cpu-tc069,cpu-tc070,cpu-tc072,cpu-tc083,
+                                       cpu-tc094,cpu-tc095,cpu-tc096,cpu-tc104,
+                                       cpu-tc105,cpu-tc108,cpu-tc109,cpu-tc116
+           all-tc1797                  alias for --silicon-bug=all-tc131
+           cpu-tc013                   workaround for CPU_TC.013
+           cpu-tc048                   workaround for CPU_TC.048
+           cpu-tc060                   workaround for CPU_TC.060
+           cpu-tc065                   workaround for CPU_TC.065
+           cpu-tc068                   workaround for CPU_TC.068
+           cpu-tc069                   workaround for CPU_TC.069
+           cpu-tc070                   workaround for CPU_TC.070
+           cpu-tc072                   workaround for CPU_TC.072
+           cpu-tc083                   workaround for CPU_TC.083
+           cpu-tc094                   workaround for CPU_TC.094
+           cpu-tc095                   workaround for CPU_TC.095
+           cpu-tc096                   workaround for CPU_TC.096
+           cpu-tc103                   workaround for CPU_TC.103
+           cpu-tc104                   workaround for CPU_TC.104
+           cpu-tc105                   check for CPU_TC.105
+           cpu-tc106                   check for CPU_TC.106
+           cpu-tc108                   workaround for CPU_TC.108
+           cpu-tc109                   workaround for CPU_TC.109
+           cpu-tc116                   workaround for CPU_TC.116
+     --spram                         indicates whether the code generated is
+                                     expected to be in SPRAM
+     --static                        treat external definitions as "static"
+     --switch=<value>                code generation algorithm for switch
+                                     statements (default: auto)
+           auto                        choose most optimal code
+           jumptab                     generate jump tables
+           linear                      use linear jump code
+           lookup                      generate lookup tables
+     --unroll-factor=<val>           default number of times to unroll an
+                                     eligible loop (default: -1)
+     --user-mode=<value>             the user mode the processor runs in
+                                     (default is kernel mode) (default: kernel)
+           kernel                      kernel supervisor mode
+           user-0                      user-0 unprivileged mode
+           user-1                      user-1 privileged mode
+     --warnings-as-errors[=<nr>[-<nr>],...]
+                                     treat all or specific warnings as errors
+
+Long options, starting with --, may be abbreviated.  The argument separator
+character '=' is only used for long options, and should be omitted when the
+option argument is specified separately.

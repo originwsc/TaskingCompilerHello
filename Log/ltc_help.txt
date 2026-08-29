@@ -1,0 +1,136 @@
+﻿Usage: ltc [options] files
+Summary of options:
+  -? --help[=<item>,...]             show option summary, or extended info:
+       o   options                     show extended option descriptions
+  -C --core=<name>                   select core (as specified in LSL file) for
+                                     current task
+  -D --define=<macro>[=<def>]        define preprocessor macro for LSL file
+  -I --include-directory=<dir>,...   add directory to LSL include file search
+                                     path
+  -L --library-directory[=<dir>,...] first search in <dir> for system libraries
+                                     specified with -l, then in default path.
+                                     When no argument is given, search only in
+                                     directories specified with -L
+  -M --map-file[=<file>,...]         generate task related map file
+  -N --no-rom-copy                   do not generate ROM copy for
+                                     re-initializing data memory
+  -O --optimize[=<flags>,...]        specify optimization level (default: 1)
+       0                               alias for -OCLTXY (none)
+       1                               alias for -OcLtxy (normal)
+       2                               alias for -Ocltxy (all)
+                                     lowercase/+ enables, uppercase/- disables:
+       c/C +/-delete-unreferenced-sections
+                                       delete un-referenced sections from the
+                                       output file
+       l/L +/-first-fit-decreasing     use a 'first fit decreasing' algorithm
+                                       to locate unrestricted sections in
+                                       memory
+       t/T +/-copytable-compression    emit smart restrictions to reduce copy
+                                       table size
+       x/X +/-delete-duplicate-code    delete duplicate code from the output
+                                       file
+       y/Y +/-delete-duplicate-data    delete duplicate constant data from the
+                                       output file
+  -P --print-mangled-symbols         do not decode c++ symbols
+  -S --strip-debug                   do not include debug information in
+                                     resulting file
+  -V --version                       display version information only
+  -c --chip-output=[<basename>]:<format>[:<addr_size>],...
+                                     generate a hex file for each chip in the
+                                     specified format (IHEX, SREC, BIN, CARR);
+                                     addr_size is the size of addresses in
+                                     bytes (except for CARR); supported values:
+                                     1,2, and 4 for IHEX, 2,3, and 4 for SREC
+  -d --lsl-file=<file>...            name of linker script file(s)
+  -e --extern=<symbol>,...           specify a symbol as unresolved external
+  -f --option-file=<file>,...        read command line information from file
+  -i --user-provided-initialization-code
+                                     the user provides his own initialization
+                                     routine, do not emit the copytable
+  -k --keep-output-files             keep output files after errors
+  -l --library=<name>                search also in system library lib<name>.a
+                                     or <name>.lib, depending on the convention
+                                     used
+  -m --map-file-format[=<flags>...]  map file formatting options (default: 2)
+       0                               alias for -mcDfikLMNoQrSU (link info)
+       1                               alias for -mCDfiKlMNoQRSU (locate info)
+       2                               alias for -mcdfiklmNoQrSu (most info)
+                                     lowercase/+ enables, uppercase/- disables:
+       c/C +/-callgraph                call graph info
+       d/D +/-removed                  removed sections info
+       f/F +/-files                    processed files info
+       i/I +/-invocation               invocation and tool info
+       k/K +/-link                     link result info
+       l/L +/-locate                   locate result info
+       m/M +/-memory                   memory usage info
+       n/N +/-nonalloc                 non alloc info
+       o/O +/-overlay                  overlay info
+       q/Q +/-statics                  module local symbols
+       r/R +/-crossref                 cross references info
+       s/S +/-lsl                      processor and memory info
+       u/U +/-rules                    locate rules
+  -o --output=[<filename>][:<format>[:<addr_size>][,<space_name>]]...
+                                     specify an output object file
+  -r --incremental                   link incrementally
+  -v --verbose                       verbose information (use twice for extra
+                                     verbose)
+  -w --no-warnings[=<number>,...]    suppress warning <number>
+     --auto-base-register            automatically select a base register as
+                                     needed for register-relative relocations
+     --case-insensitive              link case insensitive
+     --dep-file[=[<file>]]           generate a depencencies file for make
+     --diag=[<fmt>:]{all|<nr>,...}   display a description of one or more
+                                     diagnostic messages using the specified
+                                     format: html, rtf or text (default)
+     --error-file[=<file>]           redirect error messages to specified file
+     --error-limit=<nr>              the maximum number of emitted errors
+     --first-library-first           each unresolved reference is solved by
+                                     scanning the libraries in the order given
+                                     on the command line
+     --global-type-checking          verify types of variable and function
+                                     references against their definitions
+     --hex-format=<flags>            boolean flags for hex file and c-array
+                                     format settings (default: s)
+                                     lowercase/+ enables, uppercase/- disables:
+       s/S +/-start-address            emit start address record
+     --hex-record-size=<number>      size of data records in number of data
+                                     bytes
+     --ignore-default-library-path   alias for -L
+     --import-object=<file>,...      name of binary file containing a raw data
+                                     section
+     --link-only                     link only, no locating
+     --long-branch-veneers[=<value>] generate long-branch veneers (default: a)
+       a   absolute                    locate veneers for short absolute access
+     --lsl-check                     check LSL file(s) and exit
+     --lsl-dump[=[<file>]]           dump processor and memory info from LSL
+                                     file
+     --make-target=<name>            specify the target to use in the
+                                     dependencies file
+     --misra-c-report[=<file>]       generate MISRA-C report file
+     --mpu-configuration-data        emit a mpu configuration data table
+     --munch                         activate muncher in pre locate phase
+     --new-task                      create an additional task, following
+                                     options only apply to the new task
+     --no-rescan                     do not rescan libraries to solve
+                                     unresolved externals
+     --non-romable                   application is not romable, all rom
+                                     sections are located in ram
+     --pic[=Ax/Ay]                   create a position independent component
+                                     (default: A8/A9)
+     --warnings-as-errors[=<nr>,...] treat all or specific warnings as errors
+     --whole-archive=<file>          link all objects contained in the
+                                     specified library
+
+Long options, starting with --, may be abbreviated.  The argument separator
+character '=' is only used for long options, and should be omitted when the
+option argument is specified separately.
+ltc.exe : ltc E102: unknown option: "-n"
+所在位置 行:1 字符: 1
++ & "D:\Program Files\TASKING\TriCore v6.3r1\ctc\bin\ltc.exe" -n 2
+>&1 | ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~
+    + CategoryInfo          : NotSpecified: (ltc E102: unknown op 
+   tion: "-n":String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
