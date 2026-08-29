@@ -2,14 +2,15 @@
 
 ******************************************************************************  Tool and Invocation  *******************************************************************************
 +----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| tool          | TASKING VX-toolset for TriCore: object linker v6.3r1 Build 21092262 SN 73118428                                                                                  |
-| path          | D:\Program Files\TASKING\TriCore v6.3r1\ctc\bin\ltc                                                                                                              |
-| arguments     | -f cc27344a                                                                                                                                                      |
-| file:cc27344a | -o build\tasking\debug\Hello.elf -dE:\workspace\scons\Hello\Linker\Hello.lsl -D__CPU__=tc36x -D__PROC_TC36X__ --core=mpe:vtc --map-file=Hello.map -Oc -OL -Ot    |
-|               | -Ox -Oy -mc -mf -mi -mk -ml -mm -md -mr -mu -oE:\workspace\scons\Hello\build\tasking\debug\Hello.hex:IHEX --map-file --munch --error-limit=42                    |
-|               | build\tasking\debug\App\cstart.obj build\tasking\debug\App\cstart_tc1.obj build\tasking\debug\App\Hello.obj build\tasking\debug\App\sync_on_halt.obj -lrt        |
-|               | -lcxxsx_fpu -lcpsx_fpu -lcsw_fpu -lfp_fpu -lrt -LD:\Program" "Files\TASKING\TriCore" "v6.3r1\ctc\lib/tc162                                                       |
-| task          | task1                                                                                                                                                            |
+| tool         | TASKING VX-toolset for TriCore: object linker v6.3r1 Build 21092262 SN 73118428                                                                                   |
+| path         | D:\Program Files\TASKING\TriCore v6.3r1\ctc\bin\ltc                                                                                                               |
+| arguments    | -f cc1288a                                                                                                                                                        |
+| file:cc1288a | -o build\tasking\debug\Hello.elf -dE:\workspace\scons\Hello\Linker\Hello.lsl -D__CPU__=tc36x -D__PROC_TC36X__ --core=mpe:vtc                                      |
+|              | --map-file=E:\workspace\scons\Hello\build\tasking\debug\Hello.map -Oc -OL -Ot -Ox -Oy -mc -mf -mi -mk -ml -mm -md -mr -mu                                         |
+|              | -oE:\workspace\scons\Hello\build\tasking\debug\Hello.hex:IHEX --map-file --munch --error-limit=42 build\tasking\debug\App\cstart.obj                              |
+|              | build\tasking\debug\App\cstart_tc1.obj build\tasking\debug\App\Hello.obj build\tasking\debug\App\sync_on_halt.obj -lrt -lcxxsx_fpu -lcpsx_fpu -lcsw_fpu -lfp_fpu  |
+|              | -lrt -LD:\Program" "Files\TASKING\TriCore" "v6.3r1\ctc\lib/tc162                                                                                                  |
+| task         | task1                                                                                                                                                             |
 +----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 
@@ -309,9 +310,9 @@ other spaces is called "Foreign used" memory.
 ***********************************************************************************  Call Graph  ***********************************************************************************
 _START [0,24]
 |
-+-- cc4780a.src:__init_sp [0,24]
++-- cc12892a.src:__init_sp [0,24]
     |
-    +-- cc4780a.src:_start [0,24]
+    +-- cc12892a.src:_start [0,24]
         |
         +-- main [0,24]
         |   |
@@ -860,41 +861,41 @@ Note:
 +------------------------------------------------------------------------------------------------------------------------+
 | Section                                        | File           | Library      | Symbol                 | Reason       |
 |========================================================================================================================|
-| .text.cstart._endinit_set (2)                  | cstart.obj     |              | _endinit_set           | unreferenced |
-| .text.cstart._safety_endinit_set (4)           | cstart.obj     |              | _safety_endinit_set    | unreferenced |
-| .text.cstart._safety_endinit_clear (3)         | cstart.obj     |              | _safety_endinit_clear  | unreferenced |
-| .text.cstart_tc1._start_tc1 (58)               | cstart_tc1.obj |              | _start_tc1             | unreferenced |
-| .text.cstart_tc1._endinit_clear_tc1 (56)       | cstart_tc1.obj |              | _endinit_clear_tc1     | unreferenced |
-| .text.cstart_tc1._endinit_set_tc1 (57)         | cstart_tc1.obj |              | _endinit_set_tc1       | unreferenced |
-| .text.cstart_tc1.__init_sp (59)                | cstart_tc1.obj |              | .L21                   | unreferenced |
-| .rodata.cstart_tc1._999002_csa_area_end (62)   | cstart_tc1.obj |              | _999002_csa_area_end   | unreferenced |
-| .text.cstart_tc1._start (60)                   | cstart_tc1.obj |              | .L23                   | unreferenced |
-| .rodata.cstart_tc1._999001_csa_area_begin (61) | cstart_tc1.obj |              | _999001_csa_area_begin | unreferenced |
-| .text.dummy.libcsw_fpu (253)                   | printf_noarg.o | libcsw_fpu.a | dummy                  | unreferenced |
-| .text._dofil.libcsw_fpu (326)                  | _filbuf.o      | libcsw_fpu.a | _dofil                 | unreferenced |
-| .text.ungetc.libcsw_fpu (316)                  | ungetc.o       | libcsw_fpu.a | ungetc                 | unreferenced |
-| .text.fgetc.libcsw_fpu (298)                   | fgetc.o        | libcsw_fpu.a | fgetc                  | unreferenced |
-| .text._filbuf.libcsw_fpu (325)                 | _filbuf.o      | libcsw_fpu.a | _filbuf                | unreferenced |
-| .text.ungetwc.libcsw_fpu (403)                 | ungetwc.o      | libcsw_fpu.a | ungetwc                | unreferenced |
-| .text.fgetwc.libcsw_fpu (385)                  | fgetwc.o       | libcsw_fpu.a | fgetwc                 | unreferenced |
-| .text.fflush.libcsw_fpu (363)                  | fflush.o       | libcsw_fpu.a | fflush                 | unreferenced |
-| .text.fputwc.libcsw_fpu (394)                  | fputwc.o       | libcsw_fpu.a | fputwc                 | unreferenced |
-| .text._host_open.libcsw_fpu (429)              | dbg.o          | libcsw_fpu.a | _host_open             | unreferenced |
-| .bss._Errno.libcsw_fpu (421)                   | errno.o        | libcsw_fpu.a | _Errno                 | unreferenced |
-| .text._host_read.libcsw_fpu (431)              | dbg.o          | libcsw_fpu.a | _host_read             | unreferenced |
-| .text._c_init_tc1.libcsw_fpu (507)             | cinit_tc1.o    | libcsw_fpu.a | _c_init_tc1            | unreferenced |
-| .text._argcv.libcsw_fpu (435)                  | dbg.o          | libcsw_fpu.a | _argcv                 | unreferenced |
-| .text._wfilbuf.libcsw_fpu (544)                | _wfilbuf.o     | libcsw_fpu.a | _wfilbuf               | unreferenced |
-| .text._wflsbuf.libcsw_fpu (535)                | _wflsbuf.o     | libcsw_fpu.a | _wflsbuf               | unreferenced |
-| .text.traptab2.trapvec.005 (159)               | trapass.o      | libcsw_fpu.a |                        | unreferenced |
-| .text.traptab2.trapvec.003 (171)               | trapcont.o     | libcsw_fpu.a |                        | unreferenced |
 | .text.traptab2.trapvec.000 (183)               | trapmmu.o      | libcsw_fpu.a |                        | unreferenced |
+| .text.traptab2.trapvec.003 (171)               | trapcont.o     | libcsw_fpu.a |                        | unreferenced |
 | .text.traptab2.trapvec.004 (207)               | trapbus.o      | libcsw_fpu.a |                        | unreferenced |
 | .text.traptab2.trapvec.001 (195)               | trapprot.o     | libcsw_fpu.a |                        | unreferenced |
-| .text.traptab2.trapvec.007 (231)               | trapnmi.o      | libcsw_fpu.a |                        | unreferenced |
-| .text.traptab2.trapvec.002 (219)               | trapinst.o     | libcsw_fpu.a |                        | unreferenced |
 | .text.traptab2.trapvec.006 (243)               | trapsys.o      | libcsw_fpu.a |                        | unreferenced |
-| _lc__ctors (553)                               |                |              |                        | unreferenced |
+| .text.traptab2.trapvec.002 (219)               | trapinst.o     | libcsw_fpu.a |                        | unreferenced |
+| .text.traptab2.trapvec.007 (231)               | trapnmi.o      | libcsw_fpu.a |                        | unreferenced |
 | _lc__dtors (554)                               |                |              |                        | unreferenced |
+| _lc__ctors (553)                               |                |              |                        | unreferenced |
+| .text.cstart._endinit_set (2)                  | cstart.obj     |              | _endinit_set           | unreferenced |
 | .text.cstart._endinit_clear (1)                | cstart.obj     |              | _endinit_clear         | unreferenced |
+| .text.cstart._safety_endinit_set (4)           | cstart.obj     |              | _safety_endinit_set    | unreferenced |
+| .text.cstart._safety_endinit_clear (3)         | cstart.obj     |              | _safety_endinit_clear  | unreferenced |
+| .text.cstart_tc1._endinit_clear_tc1 (56)       | cstart_tc1.obj |              | _endinit_clear_tc1     | unreferenced |
+| .rodata.cstart_tc1._999001_csa_area_begin (61) | cstart_tc1.obj |              | _999001_csa_area_begin | unreferenced |
+| .text.cstart_tc1._start (60)                   | cstart_tc1.obj |              | .L23                   | unreferenced |
+| .text.cstart_tc1.__init_sp (59)                | cstart_tc1.obj |              | .L21                   | unreferenced |
+| .text.cstart_tc1._endinit_set_tc1 (57)         | cstart_tc1.obj |              | _endinit_set_tc1       | unreferenced |
+| .text.cstart_tc1._start_tc1 (58)               | cstart_tc1.obj |              | _start_tc1             | unreferenced |
+| .rodata.cstart_tc1._999002_csa_area_end (62)   | cstart_tc1.obj |              | _999002_csa_area_end   | unreferenced |
+| .text.dummy.libcsw_fpu (253)                   | printf_noarg.o | libcsw_fpu.a | dummy                  | unreferenced |
+| .text.fgetc.libcsw_fpu (298)                   | fgetc.o        | libcsw_fpu.a | fgetc                  | unreferenced |
+| .text.fflush.libcsw_fpu (363)                  | fflush.o       | libcsw_fpu.a | fflush                 | unreferenced |
+| .text.ungetc.libcsw_fpu (316)                  | ungetc.o       | libcsw_fpu.a | ungetc                 | unreferenced |
+| .text._filbuf.libcsw_fpu (325)                 | _filbuf.o      | libcsw_fpu.a | _filbuf                | unreferenced |
+| .text._dofil.libcsw_fpu (326)                  | _filbuf.o      | libcsw_fpu.a | _dofil                 | unreferenced |
+| .text._host_open.libcsw_fpu (429)              | dbg.o          | libcsw_fpu.a | _host_open             | unreferenced |
+| .text.fputwc.libcsw_fpu (394)                  | fputwc.o       | libcsw_fpu.a | fputwc                 | unreferenced |
+| .bss._Errno.libcsw_fpu (421)                   | errno.o        | libcsw_fpu.a | _Errno                 | unreferenced |
+| .text.ungetwc.libcsw_fpu (403)                 | ungetwc.o      | libcsw_fpu.a | ungetwc                | unreferenced |
+| .text.fgetwc.libcsw_fpu (385)                  | fgetwc.o       | libcsw_fpu.a | fgetwc                 | unreferenced |
+| .text._host_read.libcsw_fpu (431)              | dbg.o          | libcsw_fpu.a | _host_read             | unreferenced |
+| .text._argcv.libcsw_fpu (435)                  | dbg.o          | libcsw_fpu.a | _argcv                 | unreferenced |
+| .text._wflsbuf.libcsw_fpu (535)                | _wflsbuf.o     | libcsw_fpu.a | _wflsbuf               | unreferenced |
+| .text._wfilbuf.libcsw_fpu (544)                | _wfilbuf.o     | libcsw_fpu.a | _wfilbuf               | unreferenced |
+| .text._c_init_tc1.libcsw_fpu (507)             | cinit_tc1.o    | libcsw_fpu.a | _c_init_tc1            | unreferenced |
+| .text.traptab2.trapvec.005 (159)               | trapass.o      | libcsw_fpu.a |                        | unreferenced |
 +------------------------------------------------------------------------------------------------------------------------+

@@ -91,6 +91,9 @@ PROJECT_NAME = 'Hello'                     # 输出文件名
 TARGET_CHIP  = 'tc36x'                     # 目标芯片
 VARIANT      = ARGUMENTS.get('variant', 'debug')  # 构建变体
 
+# 构建目录 (提前定义, 供链接器标志使用)
+BUILD_DIR = os.path.join(PROJECT_DIR, 'build', 'tasking', VARIANT)
+
 # --- 1.2 源文件 (Glob 自动递归发现, 无需手动列举) ---
 # 只需指定源码根目录, SCons 自动递归扫描所有 .c 文件
 # 新增目录直接往 SOURCE_DIRS 里添加即可
@@ -159,7 +162,7 @@ LINKFLAGS = [
     '-C' + TARGET_CHIP,
     '--lsl-file=' + LSL_FILE,
     '--lsl-core=vtc',
-    '-Wl--map-file=' + PROJECT_NAME + '.map',
+    '-Wl--map-file=' + os.path.join(BUILD_DIR, PROJECT_NAME + '.map'),
     '-Wl-Oc', '-Wl-OL', '-Wl-Ot', '-Wl-Ox', '-Wl-Oy',
     '-Wl-mc', '-Wl-mf', '-Wl-mi', '-Wl-mk', '-Wl-ml',
     '-Wl-mm', '-Wl-md', '-Wl-mr', '-Wl-mu',
@@ -237,9 +240,6 @@ for inc_dir in INCLUDE_DIRS:
 # ===========================================================================
 #  7. 构建目标
 # ===========================================================================
-
-# 中间产物: build/tasking/debug/  (以 SConstruct 所在目录为基准)
-BUILD_DIR = os.path.join(PROJECT_DIR, 'build', 'tasking', variant_suffix)
 
 # 编译 .c -> .obj (镜像源文件目录结构)
 obj_files = []
