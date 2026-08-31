@@ -86,7 +86,9 @@ COMPILER_BIN_DIR = r'D:\Program Files\TASKING\TriCore v6.3r1\ctc\bin'
 # ★ 不要使用任何与项目名绑定的路径, 以便直接复制到其他工程使用
 PROJECT_DIR  = Dir('.').abspath
 
-PROJECT_NAME = 'Hello'                     # 输出文件名
+PROJECT_NAME = os.path.basename(PROJECT_DIR)  # 自动从目录名派生 (改名后自动适配)
+# 如需手动指定, 取消下面这行的注释并修改:
+# PROJECT_NAME = 'MyProject'
 TARGET_CHIP  = 'tc36x'                     # 目标芯片
 VARIANT      = ARGUMENTS.get('variant', 'debug')  # 构建变体
 
@@ -123,6 +125,7 @@ if SOURCE_EXCLUDE_PATTERNS:
 INCLUDE_DIRS = ['.'] + [d for d in SOURCE_DIRS]
 
 # --- 1.4 链接脚本 ---
+# 链接脚本文件名固定, 不随项目名变化
 LSL_FILE = os.path.join(PROJECT_DIR, 'Linker', 'Hello.lsl')
 
 # --- 1.5 预处理器宏定义 ---

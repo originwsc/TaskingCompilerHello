@@ -297,7 +297,7 @@ class MapParser:
             if size == 0:
                 continue
 
-            # 提取函数名: .text.Hello.main (56)  -> Hello.main
+            # 提取函数名: .text.xxx.main (56)  -> xxx.main
             # .text.cstart._start (7) -> _start
             func_name = sec_info
             func_name = re.sub(r"\s*\(\d+\)\s*$", "", func_name)
